@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bíblia Premium - Modo Foco Absoluto</title>
     
-    <!-- Fontes Premium -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
@@ -34,7 +33,7 @@
             background-color: #050505;
             overflow: hidden;
             /* Evita zoom ao dar dois toques rápidos no celular */
-            touch-action: manipulation; 
+            touch-action: manipulation;
         }
 
         /* --- BACKGROUND CINEMÁTICO --- */
@@ -320,6 +319,57 @@
             #exit-focus-btn { top: 15px; right: 15px; opacity: 0.5; font-size: 0.8rem; padding: 8px 15px; }
             
             #btn-fullscreen-text { display: none; } /* Esconde o texto da tela cheia, deixa só o ícone */
+            #theme-btn { flex: 1; font-size: 0.85rem; } /* Ajuste pro botão de tema no mobile */
+        }
+
+        /* --- TEMA CLARO (Glassmorphism Premium) --- */
+        body.theme-light {
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --text-primary: #121212;
+            --text-secondary: #3a3a4a;
+            --accent: #b38800; /* Dourado ajustado para ter contraste no claro */
+            background-color: #e2e8f0;
+        }
+
+        body.theme-light .background {
+            /* Degradê claro mantendo a animação 'breathe' */
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+        }
+
+        body.theme-light .ambient-light {
+            background: radial-gradient(circle, rgba(179, 136, 0, 0.15) 0%, rgba(255,255,255,0) 70%);
+        }
+
+        body.theme-light header {
+            background: linear-gradient(180deg, rgba(0,0,0,0.03) 0%, transparent 100%);
+        }
+
+        body.theme-light select, 
+        body.theme-light button {
+            background: rgba(0, 0, 0, 0.04);
+            color: var(--text-primary);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.theme-light select option { 
+            background: #f8fafc; 
+            color: #121212; 
+        }
+
+        body.theme-light button:hover, 
+        body.theme-light select:hover {
+            background: rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+
+        body.theme-light .nav-btn {
+            color: rgba(0, 0, 0, 0.2);
+        }
+
+        body.theme-light .nav-btn:hover {
+            color: var(--accent);
+            background: linear-gradient(90deg, rgba(0,0,0,0.03) 0%, transparent 100%);
         }
     </style>
 </head>
@@ -334,6 +384,7 @@
         <header id="main-header">
             <div class="header-row">
                 <div class="brand">A Palavra</div>
+        
                 <div class="controls-group">
                     <select id="version-select" title="Versão da Bíblia">
                         <option value="pt_acf">ACF</option>
@@ -354,7 +405,9 @@
                     <select id="book-select"><option>Carregando...</option></select>
                     <select id="chapter-select"><option>-</option></select>
                 </div>
+              
                 <div class="controls-group">
+                    <button id="theme-btn" title="Alternar Tema">☀️ Modo Claro</button>
                     <button id="toggle-mode-btn">❖ Foco</button>
                     <button id="fullscreen-btn" title="Tela Cheia">⛶ <span id="btn-fullscreen-text">Tela Cheia</span></button>
                 </div>
@@ -362,6 +415,7 @@
         </header>
 
         <main id="main-area">
+    
             <button class="nav-btn" id="prev-btn">❮</button>
             
             <div class="content-area" id="content-area">
@@ -384,13 +438,13 @@
 
     <script>
         // --- ESTADO E CONFIGURAÇÕES ---
-        let bibleData = []; 
+        let bibleData = [];
         let currentBookIndex = 0;
         let currentChapterIndex = 0;
         let currentVerseIndex = 0;
         let isFocusMode = false;
         
-        let currentChapterSize = 1.3; 
+        let currentChapterSize = 1.3;
         let currentFocusSize = 3.5; 
 
         // --- ELEMENTOS DOM ---
@@ -405,6 +459,7 @@
         const bookSel = document.getElementById('book-select');
         const chapSel = document.getElementById('chapter-select');
         
+        const themeBtn = document.getElementById('theme-btn');
         const toggleModeBtn = document.getElementById('toggle-mode-btn');
         const exitFocusBtn = document.getElementById('exit-focus-btn');
         const prevBtn = document.getElementById('prev-btn');
@@ -427,7 +482,8 @@
                 bookIndex: currentBookIndex,
                 chapterIndex: currentChapterIndex,
                 verseIndex: currentVerseIndex,
-                isFocusMode: isFocusMode
+                isFocusMode: isFocusMode,
+                isLightMode: body.classList.contains('theme-light')
             };
             localStorage.setItem('biblePremiumData', JSON.stringify(data));
         }
@@ -451,7 +507,20 @@
                     document.documentElement.style.setProperty('--chapter-size', `${currentChapterSize}rem`);
                     document.documentElement.style.setProperty('--focus-size', `${currentFocusSize}rem`);
 
-                    if (isFocusMode) body.className = 'mode-focus';
+                    // Aplica o tema salvo
+                    if (data.isLightMode) {
+                        body.classList.add('theme-light');
+                        themeBtn.innerHTML = '🌙 Modo Escuro';
+                    }
+
+                    // Aplica o modo salvo
+                    if (isFocusMode) {
+                        body.classList.remove('mode-chapter');
+                        body.classList.add('mode-focus');
+                    } else {
+                        body.classList.remove('mode-focus');
+                        body.classList.add('mode-chapter');
+                    }
 
                 } catch (e) {
                     console.error("Erro ao recuperar os dados salvos.", e);
@@ -491,7 +560,6 @@
             chapSel.innerHTML = '';
             const chapters = bibleData[currentBookIndex].chapters;
             chapters.forEach((_, index) => chapSel.add(new Option(`Capítulo ${index + 1}`, index)));
-            
             // Proteção caso o livro novo tenha menos capítulos que o anterior
             if(currentChapterIndex >= chapters.length) currentChapterIndex = 0;
             chapSel.value = currentChapterIndex;
@@ -500,16 +568,15 @@
         // --- RENDERIZAR TELA ---
         function renderView() {
             if(bibleData.length === 0) return;
-
             const bookName = bibleData[currentBookIndex].name;
             const chapterNum = currentChapterIndex + 1;
             const versesArray = bibleData[currentBookIndex].chapters[currentChapterIndex];
 
             bookSel.value = currentBookIndex;
             chapSel.value = currentChapterIndex;
-
             if (!isFocusMode) {
-                contentArea.scrollTop = 0; // Só sobe a tela no modo capítulo
+                contentArea.scrollTop = 0;
+                // Só sobe a tela no modo capítulo
                 chapterTitle.textContent = `${bookName} ${chapterNum}`;
                 let htmlStr = '';
                 versesArray.forEach((text, i) => {
@@ -522,11 +589,13 @@
                 focusText.textContent = `"${versesArray[currentVerseIndex]}"`;
                 
                 focusText.style.animation = 'none';
-                void focusText.offsetWidth; // Gatilho para refazer a animação
+                void focusText.offsetWidth;
+                // Gatilho para refazer a animação
                 focusText.style.animation = 'fadeInText 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
             }
             
-            saveProgress(); // Salva toda vez que a tela é atualizada
+            saveProgress();
+            // Salva toda vez que a tela é atualizada
         }
 
         // --- CONTROLES DE FONTE ---
@@ -540,12 +609,10 @@
 
         btnSizeUp.addEventListener('click', () => updateTextSize(1));
         btnSizeDown.addEventListener('click', () => updateTextSize(-1));
-
         fontSel.addEventListener('change', (e) => {
             document.documentElement.style.setProperty('--bible-font', e.target.value);
             saveProgress();
         });
-
         versionSel.addEventListener('change', (e) => {
             loadBible(e.target.value);
             saveProgress();
@@ -638,10 +705,19 @@
             if (e.key === "Escape" && isFocusMode) disableFocusMode();
         });
 
+        // --- CONTROLES DE TEMA ---
+        themeBtn.addEventListener('click', () => {
+            body.classList.toggle('theme-light');
+            const isLight = body.classList.contains('theme-light');
+            themeBtn.innerHTML = isLight ? '🌙 Modo Escuro' : '☀️ Modo Claro';
+            saveProgress();
+        });
+
         // --- CONTROLE MODO FOCO / FULLSCREEN ---
         function enableFocusMode() {
             isFocusMode = true;
-            body.className = 'mode-focus';
+            body.classList.remove('mode-chapter');
+            body.classList.add('mode-focus');
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen().catch(() => {});
             }
@@ -650,7 +726,8 @@
 
         function disableFocusMode() {
             isFocusMode = false;
-            body.className = 'mode-chapter';
+            body.classList.remove('mode-focus');
+            body.classList.add('mode-chapter');
             if (document.fullscreenElement && document.exitFullscreen) {
                 document.exitFullscreen().catch(() => {});
             }
@@ -658,7 +735,7 @@
         }
 
         toggleModeBtn.addEventListener('click', enableFocusMode);
-        
+
         exitFocusBtn.addEventListener('click', (e) => {
             e.stopPropagation(); // Previne que o clique na tela avance o versículo
             disableFocusMode();
@@ -673,8 +750,10 @@
         });
 
         // --- INICIALIZAÇÃO ---
-        loadProgress(); // Busca dados salvos ANTES de baixar a bíblia
-        loadBible(versionSel.value); // Baixa a versão que o usuário tinha salva
+        loadProgress();
+        // Busca dados salvos ANTES de baixar a bíblia
+        loadBible(versionSel.value);
+        // Baixa a versão que o usuário tinha salva
 
     </script>
 </body>
