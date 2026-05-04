@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bíblia Premium - Modo Foco Absoluto</title>
+    
+    <!-- Fontes Premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- RESET E VARIÁVEIS CSS --- */
+        :root {
+            --glass-bg: rgba(20, 25, 30, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #fdfdfd;
+            --text-secondary: #c9d1d9;
+            --accent: #d4af37;
+            
+            --bible-font: 'Playfair Display', serif;
+            --chapter-size: 1.3rem;
+            --focus-size: 3.5rem;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            background-color: #050505;
+            overflow: hidden;
+            /* Evita zoom ao dar dois toques rápidos no celular */
+            touch-action: manipulation; 
+        }
+
+        /* --- BACKGROUND CINEMÁTICO --- */
+        .background {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #31102f 100%);
+            background-size: 200% 200%;
+            animation: breathe 15s ease infinite alternate;
+            z-index: -2;
+        }
+
+        .ambient-light {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw; height: 80vh;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes breathe {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        /* --- CONTAINER PRINCIPAL --- */
+        #app-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            transition: all 0.6s ease;
+            position: relative;
+        }
+
+        .mode-focus #app-container {
+            background: transparent;
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+        }
+
+        /* --- CABEÇALHO --- */
+        header {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--glass-border);
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 50;
+        }
+
+        .mode-focus header {
+            transform: translateY(-100%);
+            opacity: 0;
+            position: absolute;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .brand {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .controls-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+        select, button {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        select option { background: #1e1e24; color: #fff; }
+
+        button:hover, select:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- ÁREA PRINCIPAL --- */
+        main {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-focus main { cursor: pointer; }
+
+        /* --- NAVEGAÇÃO LATERAL --- */
+        .nav-btn {
+            width: 8vw;
+            min-width: 50px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .nav-btn:hover {
+            color: var(--accent);
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+        }
+        #next-btn:hover { background: linear-gradient(270deg, rgba(255,255,255,0.03) 0%, transparent 100%); }
+        .mode-focus .nav-btn { display: none; }
+
+        /* --- ÁREA DE TEXTO --- */
+        .content-area {
+            flex: 1;
+            height: 100%;
+            overflow-y: auto;
+            padding: 40px 5%;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+
+        .mode-focus .content-area {
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 8%;
+        }
+        
+        .content-area::-webkit-scrollbar { width: 6px; }
+        .content-area::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.5); border-radius: 10px; }
+
+        /* MODO 1: CAPÍTULO */
+        .chapter-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .verses-container {
+            font-family: var(--bible-font);
+            font-size: var(--chapter-size);
+            line-height: 1.8;
+            color: var(--text-secondary);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .verse-item { margin-bottom: 15px; transition: color 0.3s ease; }
+        .verse-item:hover { color: var(--text-primary); }
+        .verse-number {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65em;
+            color: var(--accent);
+            font-weight: 600;
+            vertical-align: super;
+            margin-right: 6px;
+            opacity: 0.8;
+        }
+
+        /* MODO 2: FOCO */
+        .focus-container {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            text-align: center;
+        }
+
+        .focus-reference {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 30px;
+            letter-spacing: 4px;
+        }
+
+        .focus-text {
+            font-family: var(--bible-font);
+            font-size: var(--focus-size);
+            line-height: 1.4;
+            color: var(--text-primary);
+            font-style: italic;
+            text-shadow: 0 8px 30px rgba(0,0,0,0.8);
+        }
+
+        .mode-chapter .focus-container { display: none; }
+        .mode-chapter .verses-container { display: block; }
+        .mode-focus .verses-container { display: none; }
+        .mode-focus .focus-container { display: flex; }
+
+        /* Botão para sair do modo foco */
+        #exit-focus-btn {
+            display: none;
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: rgba(0,0,0,0.4);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            z-index: 100;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .mode-focus #exit-focus-btn { display: block; opacity: 0.2; }
+        .mode-focus #exit-focus-btn:hover { opacity: 1; background: rgba(255,255,255,0.2); color: #fff; }
+
+        @keyframes fadeInText {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .loading {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-top: 20vh;
+        }
+
+        /* --- ADAPTAÇÃO PARA CELULAR (MOBILE RESPONSIIVO) --- */
+        @media (max-width: 768px) {
+            header { padding: 15px; gap: 12px; }
+            .header-row { flex-direction: column; width: 100%; gap: 10px; }
+            
+            .brand { width: 100%; text-align: center; margin-bottom: 5px; font-size: 1.6rem; }
+            
+            .controls-group { width: 100%; justify-content: center; }
+            .controls-group > * { flex: 1; text-align: center; padding: 10px 5px; font-size: 0.85rem; }
+            
+            /* Ajuste dos botões menores */
+            #btn-size-down, #btn-size-up { flex: 0.3; }
+            
+            .content-area { padding: 20px 5%; }
+            .nav-btn { display: none; } /* Remove setas laterais no mobile pro texto usar 100% da tela */
+            
+            /* Escala o tamanho das fontes dinamicamente no mobile */
+            .chapter-title { font-size: 2rem; }
+            .focus-text { font-size: calc(var(--focus-size) * 0.7); } /* O texto foco reduz 30% no celular */
+            .focus-reference { font-size: 1.2rem; }
+            
+            #exit-focus-btn { top: 15px; right: 15px; opacity: 0.5; font-size: 0.8rem; padding: 8px 15px; }
+            
+            #btn-fullscreen-text { display: none; } /* Esconde o texto da tela cheia, deixa só o ícone */
+        }
+    </style>
+</head>
+<body class="mode-chapter">
+
+    <div class="background"></div>
+    <div class="ambient-light"></div>
+
+    <div id="app-container">
+        <button id="exit-focus-btn">✖ Sair do Foco</button>
+
+        <header id="main-header">
+            <div class="header-row">
+                <div class="brand">A Palavra</div>
+                <div class="controls-group">
+                    <select id="version-select" title="Versão da Bíblia">
+                        <option value="pt_acf">ACF</option>
+                        <option value="pt_nvi">NVI</option>
+                    </select>
+                    <select id="font-select" title="Tipo de Fonte">
+                        <option value="'Playfair Display', serif">Playfair</option>
+                        <option value="'Lora', serif">Lora</option>
+                        <option value="'Roboto', sans-serif">Roboto</option>
+                    </select>
+                    <button id="btn-size-down" title="Diminuir">A-</button>
+                    <button id="btn-size-up" title="Aumentar">A+</button>
+                </div>
+            </div>
+
+            <div class="header-row">
+                <div class="controls-group">
+                    <select id="book-select"><option>Carregando...</option></select>
+                    <select id="chapter-select"><option>-</option></select>
+                </div>
+                <div class="controls-group">
+                    <button id="toggle-mode-btn">❖ Foco</button>
+                    <button id="fullscreen-btn" title="Tela Cheia">⛶ <span id="btn-fullscreen-text">Tela Cheia</span></button>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-area">
+            <button class="nav-btn" id="prev-btn">❮</button>
+            
+            <div class="content-area" id="content-area">
+                <div id="loading-msg" class="loading">Desdobrando os Pergaminhos...</div>
+                
+                <div class="verses-container" id="chapter-view">
+                    <h2 class="chapter-title" id="chapter-title"></h2>
+                    <div id="verses-list"></div>
+                </div>
+
+                <div class="focus-container" id="focus-view">
+                    <div class="focus-reference" id="focus-ref"></div>
+                    <div class="focus-text" id="focus-text"></div>
+                </div>
+            </div>
+
+            <button class="nav-btn" id="next-btn">❯</button>
+        </main>
+    </div>
+
+    <script>
+        // --- ESTADO E CONFIGURAÇÕES ---
+        let bibleData = []; 
+        let currentBookIndex = 0;
+        let currentChapterIndex = 0;
+        let currentVerseIndex = 0;
+        let isFocusMode = false;
+        
+        let currentChapterSize = 1.3; 
+        let currentFocusSize = 3.5; 
+
+        // --- ELEMENTOS DOM ---
+        const body = document.body;
+        const mainArea = document.getElementById('main-area');
+        const contentArea = document.getElementById('content-area');
+        
+        const versionSel = document.getElementById('version-select');
+        const fontSel = document.getElementById('font-select');
+        const btnSizeUp = document.getElementById('btn-size-up');
+        const btnSizeDown = document.getElementById('btn-size-down');
+        const bookSel = document.getElementById('book-select');
+        const chapSel = document.getElementById('chapter-select');
+        
+        const toggleModeBtn = document.getElementById('toggle-mode-btn');
+        const exitFocusBtn = document.getElementById('exit-focus-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        
+        const loadingMsg = document.getElementById('loading-msg');
+        const chapterTitle = document.getElementById('chapter-title');
+        const versesList = document.getElementById('verses-list');
+        const focusRef = document.getElementById('focus-ref');
+        const focusText = document.getElementById('focus-text');
+
+        // --- SISTEMA DE SALVAMENTO (LOCAL STORAGE) ---
+        function saveProgress() {
+            const data = {
+                version: versionSel.value,
+                font: fontSel.value,
+                chapterSize: currentChapterSize,
+                focusSize: currentFocusSize,
+                bookIndex: currentBookIndex,
+                chapterIndex: currentChapterIndex,
+                verseIndex: currentVerseIndex,
+                isFocusMode: isFocusMode
+            };
+            localStorage.setItem('biblePremiumData', JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('biblePremiumData');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    versionSel.value = data.version || 'pt_acf';
+                    fontSel.value = data.font || "'Playfair Display', serif";
+                    currentChapterSize = data.chapterSize || 1.3;
+                    currentFocusSize = data.focusSize || 3.5;
+                    currentBookIndex = data.bookIndex || 0;
+                    currentChapterIndex = data.chapterIndex || 0;
+                    currentVerseIndex = data.verseIndex || 0;
+                    isFocusMode = data.isFocusMode || false;
+
+                    // Aplica Variáveis Visuais Salvas
+                    document.documentElement.style.setProperty('--bible-font', fontSel.value);
+                    document.documentElement.style.setProperty('--chapter-size', `${currentChapterSize}rem`);
+                    document.documentElement.style.setProperty('--focus-size', `${currentFocusSize}rem`);
+
+                    if (isFocusMode) body.className = 'mode-focus';
+
+                } catch (e) {
+                    console.error("Erro ao recuperar os dados salvos.", e);
+                }
+            }
+        }
+
+        // --- CARREGAR BÍBLIA (API) ---
+        async function loadBible(version) {
+            loadingMsg.style.display = 'block';
+            chapterTitle.style.display = 'none';
+            versesList.style.display = 'none';
+            
+            try {
+                const response = await fetch(`https://raw.githubusercontent.com/thiagobodruk/bible/master/json/${version}.json`);
+                bibleData = await response.json();
+                
+                loadingMsg.style.display = 'none';
+                chapterTitle.style.display = 'block';
+                versesList.style.display = 'block';
+                
+                populateBooks();
+                renderView();
+            } catch (error) {
+                loadingMsg.textContent = "Falha ao baixar os textos. Verifique sua conexão com a internet.";
+            }
+        }
+
+        function populateBooks() {
+            bookSel.innerHTML = '';
+            bibleData.forEach((book, index) => bookSel.add(new Option(book.name, index)));
+            bookSel.value = currentBookIndex;
+            updateChapterMenu();
+        }
+
+        function updateChapterMenu() {
+            chapSel.innerHTML = '';
+            const chapters = bibleData[currentBookIndex].chapters;
+            chapters.forEach((_, index) => chapSel.add(new Option(`Capítulo ${index + 1}`, index)));
+            
+            // Proteção caso o livro novo tenha menos capítulos que o anterior
+            if(currentChapterIndex >= chapters.length) currentChapterIndex = 0;
+            chapSel.value = currentChapterIndex;
+        }
+
+        // --- RENDERIZAR TELA ---
+        function renderView() {
+            if(bibleData.length === 0) return;
+
+            const bookName = bibleData[currentBookIndex].name;
+            const chapterNum = currentChapterIndex + 1;
+            const versesArray = bibleData[currentBookIndex].chapters[currentChapterIndex];
+
+            bookSel.value = currentBookIndex;
+            chapSel.value = currentChapterIndex;
+
+            if (!isFocusMode) {
+                contentArea.scrollTop = 0; // Só sobe a tela no modo capítulo
+                chapterTitle.textContent = `${bookName} ${chapterNum}`;
+                let htmlStr = '';
+                versesArray.forEach((text, i) => {
+                    htmlStr += `<p class="verse-item"><span class="verse-number">${i + 1}</span>${text}</p>`;
+                });
+                versesList.innerHTML = htmlStr;
+            } else {
+                const verseNum = currentVerseIndex + 1;
+                focusRef.textContent = `${bookName} ${chapterNum}:${verseNum}`;
+                focusText.textContent = `"${versesArray[currentVerseIndex]}"`;
+                
+                focusText.style.animation = 'none';
+                void focusText.offsetWidth; // Gatilho para refazer a animação
+                focusText.style.animation = 'fadeInText 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            }
+            
+            saveProgress(); // Salva toda vez que a tela é atualizada
+        }
+
+        // --- CONTROLES DE FONTE ---
+        function updateTextSize(delta) {
+            currentChapterSize = Math.max(0.8, Math.min(3, currentChapterSize + (delta * 0.1)));
+            currentFocusSize = Math.max(1.5, Math.min(6, currentFocusSize + (delta * 0.3)));
+            document.documentElement.style.setProperty('--chapter-size', `${currentChapterSize}rem`);
+            document.documentElement.style.setProperty('--focus-size', `${currentFocusSize}rem`);
+            saveProgress();
+        }
+
+        btnSizeUp.addEventListener('click', () => updateTextSize(1));
+        btnSizeDown.addEventListener('click', () => updateTextSize(-1));
+
+        fontSel.addEventListener('change', (e) => {
+            document.documentElement.style.setProperty('--bible-font', e.target.value);
+            saveProgress();
+        });
+
+        versionSel.addEventListener('change', (e) => {
+            loadBible(e.target.value);
+            saveProgress();
+        });
+
+        // --- NAVEGAÇÃO LÓGICA ---
+        function goNext() {
+            if (!isFocusMode) {
+                if (currentChapterIndex < bibleData[currentBookIndex].chapters.length - 1) {
+                    currentChapterIndex++;
+                } else if (currentBookIndex < bibleData.length - 1) {
+                    currentBookIndex++;
+                    currentChapterIndex = 0;
+                    updateChapterMenu();
+                }
+            } else {
+                const versesInChapter = bibleData[currentBookIndex].chapters[currentChapterIndex].length;
+                if (currentVerseIndex < versesInChapter - 1) {
+                    currentVerseIndex++;
+                } else if (currentChapterIndex < bibleData[currentBookIndex].chapters.length - 1) {
+                    currentChapterIndex++;
+                    currentVerseIndex = 0;
+                    updateChapterMenu();
+                } else if (currentBookIndex < bibleData.length - 1) {
+                    currentBookIndex++;
+                    currentChapterIndex = 0;
+                    currentVerseIndex = 0;
+                    updateChapterMenu();
+                }
+            }
+            renderView();
+        }
+
+        function goPrev() {
+            if (!isFocusMode) {
+                if (currentChapterIndex > 0) {
+                    currentChapterIndex--;
+                } else if (currentBookIndex > 0) {
+                    currentBookIndex--;
+                    currentChapterIndex = bibleData[currentBookIndex].chapters.length - 1;
+                    updateChapterMenu();
+                }
+            } else {
+                if (currentVerseIndex > 0) {
+                    currentVerseIndex--;
+                } else if (currentChapterIndex > 0) {
+                    currentChapterIndex--;
+                    currentVerseIndex = bibleData[currentBookIndex].chapters[currentChapterIndex].length - 1;
+                    updateChapterMenu();
+                } else if (currentBookIndex > 0) {
+                    currentBookIndex--;
+                    currentChapterIndex = bibleData[currentBookIndex].chapters.length - 1;
+                    currentVerseIndex = bibleData[currentBookIndex].chapters[currentChapterIndex].length - 1;
+                    updateChapterMenu();
+                }
+            }
+            renderView();
+        }
+
+        // --- EVENTOS (CLIQUE / TOUCH / MENUS) ---
+        bookSel.addEventListener('change', (e) => {
+            currentBookIndex = parseInt(e.target.value);
+            currentChapterIndex = 0;
+            currentVerseIndex = 0;
+            updateChapterMenu();
+            renderView();
+        });
+
+        chapSel.addEventListener('change', (e) => {
+            currentChapterIndex = parseInt(e.target.value);
+            currentVerseIndex = 0;
+            renderView();
+        });
+
+        nextBtn.addEventListener('click', goNext);
+        prevBtn.addEventListener('click', goPrev);
+
+        // Toque/Clique na tela para modo foco
+        mainArea.addEventListener('click', (e) => {
+            if (isFocusMode) {
+                const screenWidth = window.innerWidth;
+                if (e.clientX < screenWidth / 2) goPrev(); // Esquerda volta
+                else goNext(); // Direita avança
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowRight") goNext();
+            if (e.key === "ArrowLeft") goPrev();
+            if (e.key === "Escape" && isFocusMode) disableFocusMode();
+        });
+
+        // --- CONTROLE MODO FOCO / FULLSCREEN ---
+        function enableFocusMode() {
+            isFocusMode = true;
+            body.className = 'mode-focus';
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            }
+            renderView();
+        }
+
+        function disableFocusMode() {
+            isFocusMode = false;
+            body.className = 'mode-chapter';
+            if (document.fullscreenElement && document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            }
+            renderView();
+        }
+
+        toggleModeBtn.addEventListener('click', enableFocusMode);
+        
+        exitFocusBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Previne que o clique na tela avance o versículo
+            disableFocusMode();
+        });
+
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        });
+
+        // --- INICIALIZAÇÃO ---
+        loadProgress(); // Busca dados salvos ANTES de baixar a bíblia
+        loadBible(versionSel.value); // Baixa a versão que o usuário tinha salva
+
+    </script>
+</body>
+</html>
