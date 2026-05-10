@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Menu Premium - A Palavra</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================
+           VARIÁVEIS PADRÃO BIBLE.HTML (DARK & GOLD)
+           ========================================== */
+        :root {
+            --glass-bg: rgba(20, 25, 30, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #fdfdfd;
+            --text-secondary: #c9d1d9;
+            --accent: #d4af37;
+            
+            --bible-font: 'Playfair Display', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            background-color: #050505;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- BACKGROUND CINEMÁTICO (Idêntico ao bible.html) --- */
+        .background {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #31102f 100%);
+            background-size: 200% 200%;
+            animation: breathe 15s ease infinite alternate;
+            z-index: -2;
+        }
+
+        .ambient-light {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw; height: 80vh;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes breathe {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        /* --- CONTAINER PRINCIPAL --- */
+        #app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            width: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            transition: all 0.6s ease;
+        }
+
+        /* --- CABEÇALHO --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            border-bottom: 1px solid var(--glass-border);
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .brand {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .controls-group { display: flex; gap: 10px; align-items: center; }
+
+        button {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        button:hover, .btn-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .btn-accent:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.1) 100%);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            color: #fff;
+        }
+
+        /* --- CONTEÚDO --- */
+        main { flex: 1; padding: 50px 5%; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 60px;
+            font-family: var(--bible-font);
+            font-style: italic;
+        }
+
+        /* --- GRID DE TEMAS (Glassmorphism Luxo) --- */
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 80px;
+        }
+
+        .theme-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .theme-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(212, 175, 55, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.1);
+        }
+
+        .theme-icon { font-size: 2rem; margin-bottom: 15px; display: block; filter: grayscale(20%); }
+        .theme-name { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--text-primary); font-weight: 600; margin-bottom: 8px; letter-spacing: 1px; }
+        .theme-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+
+        /* --- DEVOCIONAL DIÁRIO --- */
+        .devotional-section {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .ai-content h3 { font-family: 'Cinzel', serif; color: var(--accent); font-size: 1.6rem; margin-bottom: 20px; letter-spacing: 1px; }
+        .ai-content p { line-height: 1.8; margin-bottom: 15px; font-size: 1.1rem; color: var(--text-secondary); }
+        .ai-content blockquote {
+            font-family: var(--bible-font); font-size: 1.3rem; font-style: italic;
+            border-left: 3px solid var(--accent); padding: 15px 25px;
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.08) 0%, transparent 100%);
+            margin: 25px 0; color: #fff; border-radius: 0 8px 8px 0;
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: 0.4s ease; z-index: 1000; padding: 20px;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+        .modal-content {
+            background: #0d1117;
+            width: 100%; max-width: 750px; max-height: 85vh;
+            border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 40px; overflow-y: auto;
+            transform: translateY(20px); transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6); position: relative;
+        }
+
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+
+        .close-modal {
+            position: absolute; top: 15px; right: 15px;
+            background: transparent; border: none; color: var(--text-secondary);
+            font-size: 1.5rem; cursor: pointer; padding: 5px 15px; border-radius: 8px;
+        }
+        .close-modal:hover { color: var(--accent); background: rgba(255,255,255,0.05); }
+
+        /* Loading */
+        .loading-spinner { text-align: center; padding: 40px 0; color: var(--accent); font-family: 'Cinzel', serif; font-size: 1.2rem; }
+        .loading-spinner .spinner {
+            width: 40px; height: 40px; border: 3px solid rgba(212, 175, 55, 0.2);
+            border-top-color: var(--accent); border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 0 auto 20px auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.5); border-radius: 10px; }
+
+        /* --- TEMA CLARO (Idêntico ao bible.html) --- */
+        body.theme-light {
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --text-primary: #121212;
+            --text-secondary: #3a3a4a;
+            --accent: #b38800; 
+            background-color: #e2e8f0;
+        }
+
+        body.theme-light .background { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%); }
+        body.theme-light .ambient-light { background: radial-gradient(circle, rgba(179, 136, 0, 0.15) 0%, rgba(255,255,255,0) 70%); }
+        body.theme-light header { background: linear-gradient(180deg, rgba(0,0,0,0.03) 0%, transparent 100%); }
+        
+        body.theme-light button { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.1); color: var(--text-primary); }
+        body.theme-light button:hover { background: rgba(0, 0, 0, 0.08); border-color: rgba(0, 0, 0, 0.2); }
+        
+        body.theme-light .btn-accent { background: linear-gradient(135deg, rgba(179, 136, 0, 0.15) 0%, rgba(179, 136, 0, 0.05) 100%); border-color: rgba(179, 136, 0, 0.3); }
+        body.theme-light .btn-accent:hover { color: #121212; }
+
+        body.theme-light .theme-card { background: rgba(255, 255, 255, 0.5); border-color: rgba(0,0,0,0.1); }
+        body.theme-light .theme-card:hover { background: rgba(255, 255, 255, 0.8); border-color: rgba(179, 136, 0, 0.4); }
+
+        body.theme-light .devotional-section { background: rgba(255, 255, 255, 0.4); }
+        body.theme-light .ai-content blockquote { color: #121212; background: linear-gradient(90deg, rgba(179, 136, 0, 0.1) 0%, transparent 100%); }
+        body.theme-light .modal-content { background: #f0f2f5; border-color: rgba(179, 136, 0, 0.3); }
+
+        /* --- MOBILE --- */
+        @media (max-width: 768px) {
+            header { padding: 15px; }
+            .brand { font-size: 1.4rem; }
+            .btn-text { display: none; }
+            main { padding: 30px 5%; }
+            .section-title { font-size: 2rem; }
+            .themes-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .theme-card { padding: 20px 10px; }
+            .theme-icon { font-size: 1.8rem; }
+            .theme-name { font-size: 1rem; }
+            .devotional-section { padding: 25px 20px; }
+            .modal-content { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body class="mode-chapter">
+
+    <div class="background"></div>
+    <div class="ambient-light"></div>
+
+    <div id="app-container">
+        <header>
+            <div class="brand">A Palavra</div>
+            <div class="controls-group">
+                <button id="theme-btn" title="Alternar Tema">☀️<span class="btn-text"> Tema</span></button>
+                <a href="bible.html" class="btn-accent" style="text-decoration: none; padding: 10px 16px; border-radius: 8px;">📖<span class="btn-text"> Bíblia</span></a>
+            </div>
+        </header>
+
+        <main>
+            <h1 class="section-title">O que seu coração busca hoje?</h1>
+            <p class="section-subtitle">Escolha um tema e receba uma palavra preparada especialmente para você.</p>
+            
+            <div class="themes-grid">
+                <div class="theme-card" onclick="openTopic('Salvação', '🤍')">
+                    <span class="theme-icon">🤍</span>
+                    <div class="theme-name">Salvação</div>
+                    <div class="theme-desc">Graça e redenção</div>
+                </div>
+                
+                <div class="theme-card" onclick="openTopic('Amor', '🌹')">
+                    <span class="theme-icon">🌹</span>
+                    <div class="theme-name">Amor</div>
+                    <div class="theme-desc">O cuidado perfeito</div>
+                </div>
+                
+                <div class="theme-card" onclick="openTopic('Prosperidade', '✨')">
+                    <span class="theme-icon">✨</span>
+                    <div class="theme-name">Prosperidade</div>
+                    <div class="theme-desc">Caminhos e provisões</div>
+                </div>
+                
+                <div class="theme-card" onclick="openTopic('Adversidade', '🕊️')">
+                    <span class="theme-icon">🕊️</span>
+                    <div class="theme-name">Adversidade</div>
+                    <div class="theme-desc">Força nas tempestades</div>
+                </div>
+                
+                <div class="theme-card" style="grid-column: 1 / -1;" onclick="openTopic('Reflexão sobre a Vida', '⏳')">
+                    <span class="theme-icon">⏳</span>
+                    <div class="theme-name">Reflexão sobre a Vida</div>
+                    <div class="theme-desc">Sabedoria e propósito no caminhar diário.</div>
+                </div>
+            </div>
+
+            <section class="devotional-section">
+                <div id="devocional-content" class="ai-content">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <div>Desdobrando os Pergaminhos...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="reflection-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">✖</button>
+            <div id="modal-body" class="ai-content">
+                </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="bible.html" class="btn-accent" style="text-decoration: none; padding: 12px 24px; border-radius: 8px; display: inline-block;">Ir para a Leitura Completa</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURAÇÃO DA API (COLOQUE A SUA AQUI)
+        // ==========================================
+        const GEMINI_API_KEY = 'AIzaSyAL1U3l7yhf9mq9-Uqjk3ukIArOHEJ7eWE'; 
+
+        // ==========================================
+        // 1. LÓGICA DO TEMA (Idêntico ao bible.html)
+        // ==========================================
+        const themeBtn = document.getElementById('theme-btn');
+        const body = document.body;
+
+        // Recupera o tema se o usuário já escolheu no bible.html ou menu.html
+        function loadTheme() {
+            const saved = localStorage.getItem('biblePremiumData');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.isLightMode) {
+                        body.classList.add('theme-light');
+                        themeBtn.innerHTML = '🌙<span class="btn-text"> Tema</span>';
+                    }
+                } catch (e) {}
+            }
+        }
+
+        themeBtn.addEventListener('click', () => {
+            body.classList.toggle('theme-light');
+            const isLight = body.classList.contains('theme-light');
+            themeBtn.innerHTML = isLight ? '🌙<span class="btn-text"> Tema</span>' : '☀️<span class="btn-text"> Tema</span>';
+            
+            // Salva na mesma estrutura do bible.html para sincronizar
+            let data = {};
+            try { data = JSON.parse(localStorage.getItem('biblePremiumData')) || {}; } catch(e){}
+            data.isLightMode = isLight;
+            localStorage.setItem('biblePremiumData', JSON.stringify(data));
+        });
+
+        loadTheme();
+
+        // ==========================================
+        // 2. LÓGICA DO MODAL
+        // ==========================================
+        const modal = document.getElementById('reflection-modal');
+        const modalBody = document.getElementById('modal-body');
+
+        function closeModal() { modal.classList.remove('active'); }
+        modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+
+        // ==========================================
+        // 3. GERAÇÃO COM IA (TEMAS CLICADOS)
+        // ==========================================
+        async function openTopic(topicName, icon) {
+            modal.classList.add('active');
+            
+            modalBody.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <div>Buscando sabedoria sobre ${topicName}...</div>
+                </div>
+            `;
+
+            if(GEMINI_API_KEY === 'COLOQUE_SUA_API_AQUI') {
+                modalBody.innerHTML = `<p style="color: var(--accent); text-align: center;">Por favor, insira sua chave da API do Gemini no código para ativar esta função divina.</p>`;
+                return;
+            }
+
+            const promptText = `
+                Você é um conselheiro cristão sábio. Escreva uma reflexão profunda, mas direta, sobre o tema "${topicName}".
+                Estrutura OBRIGATÓRIA em HTML puro (sem crases de markdown):
+                <h3>${icon} Sabedoria sobre ${topicName}</h3>
+                <p>[Um parágrafo de introdução acolhedora]</p>
+                <blockquote>[Um versículo bíblico forte sobre o tema, com a referência]</blockquote>
+                <p>[Um parágrafo de aplicação prática para a vida]</p>
+            `;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+                });
+
+                if (!response.ok) throw new Error('Falha na API');
+                
+                const data = await response.json();
+                let rawHtml = data.candidates[0].content.parts[0].text;
+                rawHtml = rawHtml.replace(/```html/g, '').replace(/```/g, ''); 
+                
+                modalBody.innerHTML = rawHtml;
+            } catch (error) {
+                modalBody.innerHTML = `<p>Houve um erro ao buscar a palavra. Sinta a paz e tente novamente.</p>`;
+            }
+        }
+
+        // ==========================================
+        // 4. GERAÇÃO COM IA (DEVOCIONAL DIÁRIO)
+        // ==========================================
+        async function generateDevotional() {
+            const contentDiv = document.getElementById('devocional-content');
+            const today = new Date().toLocaleDateString('pt-BR');
+            const cachedData = localStorage.getItem('premiumDevotionalData');
+            
+            if (cachedData) {
+                const parsedData = JSON.parse(cachedData);
+                if (parsedData.date === today) {
+                    contentDiv.innerHTML = parsedData.html;
+                    return;
+                }
+            }
+
+            if(GEMINI_API_KEY === 'COLOQUE_SUA_API_AQUI') {
+                contentDiv.innerHTML = `
+                    <h3 style="margin-bottom: 20px;">O Devocional de Hoje</h3>
+                    <p style="color: var(--text-secondary);">Insira a chave da API do Gemini na linha 270 do código para gerar histórias e devocionais diários automaticamente.</p>`;
+                return;
+            }
+
+            const promptText = `
+                Aja como um pastor sábio. Escreva um devocional diário sofisticado.
+                Sorteie aleatoriamente uma história bíblica inspiradora (ex: Davi e Golias, Rute, Ester, o filho pródigo, Zaqueu...).
+                Estrutura OBRIGATÓRIA em HTML puro (sem markdown):
+                <h3>O Devocional de Hoje</h3>
+                <p>[Conte a história resumida de forma cativante em 1 parágrafo longo]</p>
+                <blockquote>[Cite o versículo chave dessa história]</blockquote>
+                <p>[Faça uma reflexão profunda sobre como aplicar essa atitude na nossa vida diária em 1 parágrafo]</p>
+            `;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+                });
+
+                if (!response.ok) throw new Error('Falha na API');
+
+                const data = await response.json();
+                let rawHtml = data.candidates[0].content.parts[0].text;
+                rawHtml = rawHtml.replace(/```html/g, '').replace(/```/g, '');
+
+                localStorage.setItem('premiumDevotionalData', JSON.stringify({ date: today, html: rawHtml }));
+                contentDiv.innerHTML = rawHtml;
+
+            } catch (error) {
+                contentDiv.innerHTML = `<p>Não foi possível carregar o devocional. Verifique sua conexão.</p>`;
+            }
+        }
+
+        // Inicia
+        generateDevotional();
+
+    </script>
+</body>
+</html>
