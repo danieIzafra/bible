@@ -3,66 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bíblia Premium - Modo Foco Absoluto</title>
+    <title>Bíblia Premium - A Palavra</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=Lora:ital,wght@0,400;1,400&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="A Palavra">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;1,400&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <style>
-        /* --- RESET E VARIÁVEIS CSS --- */
+        /* ==========================================
+           ARQUITETURA DE VARIÁVEIS (ROSE GOLD LUXURY)
+           ========================================== */
         :root {
-            --glass-bg: rgba(20, 25, 30, 0.4);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --text-primary: #fdfdfd;
-            --text-secondary: #c9d1d9;
-            --accent: #d4af37;
+            --bg-color: #141113;
+            --glass-bg: rgba(36, 28, 33, 0.45);
+            --glass-border: rgba(229, 178, 153, 0.15);
+            --glass-highlight: rgba(255, 255, 255, 0.1);
+            
+            --text-primary: #F8F4F1;
+            --text-secondary: #C8B9B2;
+            
+            --accent: #E5B299; /* Rose Gold */
+            --accent-glow: rgba(229, 178, 153, 0.25);
+            --accent-hover: #F2C9B6;
             
             --bible-font: 'Playfair Display', serif;
+            --title-font: 'Cinzel', serif;
+            --body-font: 'Inter', sans-serif;
+            
             --chapter-size: 1.3rem;
             --focus-size: 3.5rem;
+            
+            --radius-sm: 12px;
+            --radius-md: 20px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body, html {
             height: 100%;
             width: 100%;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--body-font);
             color: var(--text-primary);
-            background-color: #050505;
+            background-color: var(--bg-color);
             overflow: hidden;
             touch-action: manipulation;
         }
 
-        /* --- BACKGROUND CINEMÁTICO --- */
-        .background {
+        /* --- BACKGROUND CINEMÁTICO & GLOW --- */
+        .background-layer {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #31102f 100%);
-            background-size: 200% 200%;
-            animation: breathe 15s ease infinite alternate;
+            background: radial-gradient(circle at 80% -20%, var(--accent-glow) 0%, transparent 40%),
+                        radial-gradient(circle at 20% 120%, rgba(229, 178, 153, 0.1) 0%, transparent 50%);
             z-index: -2;
-        }
-
-        .ambient-light {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80vw; height: 80vh;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        @keyframes breathe {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+            transition: all 0.6s ease;
         }
 
         /* --- CONTAINER PRINCIPAL --- */
@@ -72,27 +74,30 @@
             width: 100%;
             height: 100%;
             background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
             transition: all 0.6s ease;
             position: relative;
         }
 
         .mode-focus #app-container {
-            background: transparent;
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
+            background: rgba(10, 8, 9, 0.6);
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
         }
 
-        /* --- CABEÇALHO E MENU --- */
+        /* --- CABEÇALHO COM GLASSMORPHISM --- */
         header {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            padding: 15px 40px;
+            padding: 20px 5%;
+            background: rgba(20, 17, 19, 0.6);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border-bottom: 1px solid var(--glass-border);
-            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
             z-index: 50;
         }
 
@@ -110,12 +115,17 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        .brand {
-            font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
-            font-weight: 600;
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--title-font);
+            font-size: 1.4rem;
             color: var(--accent);
             text-transform: uppercase;
             letter-spacing: 3px;
@@ -123,49 +133,75 @@
 
         .controls-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
-        select, button {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
+        /* Botões Globais */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-family: var(--body-font);
+            font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
             outline: none;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
         }
 
-        select option { background: #1e1e24; color: #fff; }
+        .btn i { font-size: 1.2rem; }
 
-        button:hover, select:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
+        .btn:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--accent); }
 
-        #btn-audio {
+        .btn-audio { color: var(--accent); border-color: rgba(229, 178, 153, 0.4); }
+        .btn-audio:hover { background: rgba(229, 178, 153, 0.1); }
+        .btn-audio.is-playing { background: var(--accent); color: var(--bg-color); }
+
+        .btn-focus {
+            background: linear-gradient(135deg, rgba(229, 178, 153, 0.15) 0%, rgba(229, 178, 153, 0.05) 100%);
+            border-color: rgba(229, 178, 153, 0.5);
             color: var(--accent);
-            border-color: rgba(212, 175, 55, 0.4);
+        }
+        .btn-focus:hover { box-shadow: 0 0 15px var(--accent-glow); color: #fff; }
+
+        /* Seletores Globais (Selects) */
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+            padding: 10px 35px 10px 15px;
+            border-radius: var(--radius-sm);
+            font-family: var(--body-font);
+            font-size: 0.95rem;
+            cursor: pointer;
+            outline: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23E5B299%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px top 50%;
+            background-size: 10px auto;
+            transition: all 0.3s;
+        }
+
+        select option { background: var(--bg-color); color: var(--text-primary); }
+        select:hover { border-color: var(--accent); }
+
+        .nav-selectors { display: flex; gap: 15px; flex: 1; max-width: 800px; margin: 0 auto; }
+        .nav-selectors select {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border-radius: var(--radius-md);
+            background-color: rgba(255, 255, 255, 0.05);
             font-weight: 500;
         }
-        
-        #btn-audio:hover { background: rgba(212, 175, 55, 0.15); }
 
-        #toggle-mode-btn {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.05) 100%);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        #toggle-mode-btn:hover {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.1) 100%);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-        }
-
-        /* Menu Retrátil (Drawer) para economizar espaço */
+        /* Menu Retrátil (Drawer) */
         .settings-panel {
             display: flex;
             gap: 15px;
@@ -175,46 +211,15 @@
             overflow: hidden;
             opacity: 0;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 0 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .settings-panel.active {
-            max-height: 100px;
+            max-height: 120px;
             opacity: 1;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            border: 1px solid var(--glass-border);
-            margin-top: 5px;
-        }
-
-        /* Seletores Principais de Navegação (Glassmorphism) */
-        .nav-selectors {
-            display: flex;
-            gap: 15px;
-            flex: 1;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .nav-selectors select {
-            flex: 1;
-            padding: 12px 20px;
-            font-size: 1.1rem;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            font-weight: 500;
-            letter-spacing: 1px;
-        }
-
-        .nav-selectors select:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(212, 175, 55, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.1);
+            padding-top: 15px;
         }
 
         /* --- ÁREA PRINCIPAL --- */
@@ -227,28 +232,28 @@
 
         .mode-focus main { cursor: pointer; }
 
-        /* --- NAVEGAÇÃO LATERAL --- */
-        .nav-btn {
+        /* --- NAVEGAÇÃO LATERAL (Apenas PC) --- */
+        .nav-side-btn {
             width: 8vw;
-            min-width: 50px;
+            min-width: 60px;
             background: transparent;
             border: none;
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.2);
             font-size: 2.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
         }
 
-        .nav-btn:hover {
+        .nav-side-btn:hover {
             color: var(--accent);
             background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, transparent 100%);
         }
         #next-btn:hover { background: linear-gradient(270deg, rgba(255,255,255,0.03) 0%, transparent 100%); }
-        .mode-focus .nav-btn { display: none; }
+        .mode-focus .nav-side-btn { display: none; }
 
         /* --- ÁREA DE TEXTO --- */
         .content-area {
@@ -257,8 +262,6 @@
             overflow-y: auto;
             padding: 40px 5%;
             scroll-behavior: smooth;
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent) transparent;
         }
 
         .mode-focus .content-area {
@@ -266,20 +269,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0 8%;
+            padding: 0 5%;
         }
         
         .content-area::-webkit-scrollbar { width: 6px; }
-        .content-area::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.5); border-radius: 10px; }
+        .content-area::-webkit-scrollbar-track { background: transparent; }
+        .content-area::-webkit-scrollbar-thumb { background: rgba(229, 178, 153, 0.3); border-radius: 10px; }
 
         /* MODO 1: CAPÍTULO */
         .chapter-title {
-            font-family: 'Cinzel', serif;
+            font-family: var(--title-font);
             font-size: 2.5rem;
             color: var(--accent);
             text-align: center;
             margin-bottom: 40px;
-            font-weight: 600;
+            font-weight: 500;
             letter-spacing: 2px;
         }
 
@@ -290,14 +294,14 @@
             color: var(--text-secondary);
             max-width: 900px;
             margin: 0 auto;
-            padding-bottom: 60px;
+            padding-bottom: 80px;
         }
 
         /* EFEITOS DE SELEÇÃO E AUDIO NOS VERSÍCULOS */
         .verse-item { 
             margin-bottom: 15px; 
-            padding: 10px 15px;
-            border-radius: 8px;
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
             border-left: 3px solid transparent;
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
@@ -309,28 +313,28 @@
         }
 
         .verse-item.selected {
-            background: linear-gradient(90deg, rgba(212, 175, 55, 0.12) 0%, transparent 100%);
+            background: linear-gradient(90deg, rgba(229, 178, 153, 0.1) 0%, transparent 100%);
             border-left: 3px solid var(--accent);
             color: var(--text-primary);
-            transform: scale(1.02);
-            box-shadow: -5px 0 20px rgba(212, 175, 55, 0.08);
+            transform: scale(1.02) translateX(5px);
         }
 
         .verse-item.playing {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.12) 0%, transparent 100%);
             border-left: 3px solid #fff;
             color: #fff;
-            transform: scale(1.03);
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            transform: scale(1.03) translateX(8px);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
 
         .verse-number {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.65em;
+            font-family: var(--body-font);
+            font-size: 0.6em;
             color: var(--accent);
             font-weight: 600;
             vertical-align: super;
-            margin-right: 6px;
+            margin-right: 8px;
             opacity: 0.8;
         }
 
@@ -342,14 +346,17 @@
             align-items: center;
             width: 100%;
             text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
         .focus-reference {
-            font-family: 'Cinzel', serif;
+            font-family: var(--title-font);
             font-size: 1.5rem;
             color: var(--accent);
             margin-bottom: 30px;
             letter-spacing: 4px;
+            opacity: 0.8;
         }
 
         .focus-text {
@@ -358,7 +365,7 @@
             line-height: 1.4;
             color: var(--text-primary);
             font-style: italic;
-            text-shadow: 0 8px 30px rgba(0,0,0,0.8);
+            text-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
 
         .mode-chapter .focus-container { display: none; }
@@ -366,176 +373,141 @@
         .mode-focus .verses-container { display: none; }
         .mode-focus .focus-container { display: flex; }
 
-        #exit-focus-btn {
+        .btn-exit-focus {
             display: none;
             position: fixed;
             top: 25px;
             right: 25px;
-            background: rgba(0,0,0,0.4);
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
             color: var(--text-secondary);
-            border: 1px solid rgba(255,255,255,0.15);
-            padding: 10px 20px;
+            border: 1px solid var(--glass-border);
+            padding: 12px 24px;
             border-radius: 30px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
+            font-family: var(--body-font);
+            font-size: 0.95rem;
             cursor: pointer;
             z-index: 100;
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
+            align-items: center;
+            gap: 8px;
         }
 
-        .mode-focus #exit-focus-btn { display: block; opacity: 0.2; }
-        .mode-focus #exit-focus-btn:hover { opacity: 1; background: rgba(255,255,255,0.2); color: #fff; }
+        .mode-focus .btn-exit-focus { display: flex; opacity: 0.3; }
+        .mode-focus .btn-exit-focus:hover { opacity: 1; background: var(--accent); color: var(--bg-color); border-color: var(--accent); }
 
         @keyframes fadeInText {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: translateY(10px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        .loading {
-            text-align: center;
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            color: var(--accent);
-            margin-top: 20vh;
+        .loader-container { text-align: center; margin-top: 20vh; color: var(--accent); font-family: var(--title-font); letter-spacing: 2px;}
+        .loader-ring {
+            width: 50px; height: 50px; margin: 0 auto 20px;
+            border: 2px solid rgba(229, 178, 153, 0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- TEMA CLARO (SOFT BLUSH / NUDE) --- */
+        body.theme-light {
+            --bg-color: #FDFBFA;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(229, 178, 153, 0.4);
+            --text-primary: #2C2421;
+            --text-secondary: #7A6A63;
+            --accent: #D48C70; 
+            --accent-glow: rgba(212, 140, 112, 0.15);
+            --accent-hover: #B87358;
         }
 
-        /* --- ADAPTAÇÃO PARA CELULAR (MOBILE RESPONSIIVO) --- */
+        body.theme-light .background-layer { 
+            background: radial-gradient(circle at 15% 50%, rgba(230, 230, 240, 1), transparent 50%),
+                        linear-gradient(135deg, #fdfdfd 0%, #e2e4ea 100%); 
+        }
+        body.theme-light header { background: rgba(253, 251, 250, 0.85); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); }
+        body.theme-light select, 
+        body.theme-light .btn { background: rgba(255, 255, 255, 0.8); color: var(--text-primary); border-color: rgba(212, 140, 112, 0.3); }
+        body.theme-light .btn:hover { background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        body.theme-light .btn-focus { background: linear-gradient(135deg, rgba(212, 140, 112, 0.15) 0%, rgba(212, 140, 112, 0.05) 100%); }
+        body.theme-light select option { background: #fff; color: var(--text-primary); }
+        body.theme-light .nav-side-btn { color: rgba(0, 0, 0, 0.2); }
+        body.theme-light .nav-side-btn:hover { color: var(--accent); }
+        body.theme-light .verse-item.selected { background: linear-gradient(90deg, rgba(212, 140, 112, 0.1) 0%, transparent 100%); }
+        body.theme-light .verse-item.playing { background: linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0%, transparent 100%); border-left: 3px solid #121212; color: #121212; text-shadow: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        body.theme-light .mode-focus #app-container { background: rgba(255, 255, 255, 0.5); }
+        body.theme-light .focus-text { text-shadow: 0 10px 40px rgba(255,255,255,0.8); }
+
+        /* --- RESPONSIVIDADE EXTREMA (MOBILE-FIRST FEEL) --- */
         @media (max-width: 768px) {
-            header { padding: 15px; gap: 10px; }
+            header { padding: 15px 20px; gap: 12px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
             .header-row { flex-wrap: nowrap; margin-bottom: 5px; }
             
-            .brand { font-size: 1.4rem; letter-spacing: 1px; }
-            .btn-text { display: none; } /* Esconde o texto dos botões no mobile para não poluir */
+            .brand-logo { font-size: 1.2rem; letter-spacing: 1px; }
+            .brand-logo i { font-size: 1.4rem; }
+            .btn span { display: none; } /* Esconde o texto, deixa só ícone */
             
-            .nav-selectors { gap: 10px; }
-            .nav-selectors select { padding: 10px; font-size: 1rem; }
+            .controls-group { gap: 8px; }
+            .controls-group .btn {
+                width: 42px; height: 42px; padding: 0; 
+                border-radius: 12px; font-size: 1.2rem;
+            }
+            
+            .nav-selectors { gap: 10px; width: 100%; }
+            .nav-selectors select { padding: 12px 15px; font-size: 0.95rem; border-radius: 16px; }
 
             .settings-panel { flex-wrap: wrap; justify-content: space-between; gap: 10px; }
-            .settings-panel.active { max-height: 200px; }
-            .settings-panel select, .settings-panel .controls-group { width: 48%; }
-            .settings-panel .controls-group { justify-content: center; }
+            .settings-panel.active { max-height: 180px; }
+            .settings-panel select { width: 48%; }
+            .settings-panel .controls-group { width: 100%; justify-content: space-between; }
+            .settings-panel .controls-group .btn { width: 48%; border-radius: 12px; } 
             
-            /* Botões laterais flutuantes no mobile (Glassmorphism) */
-            .nav-btn {
-                display: flex;
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 40px;
-                height: 80px;
-                background: rgba(255, 255, 255, 0.08);
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
-                border-radius: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.15);
-                font-size: 1.2rem;
-                z-index: 40;
-            }
-            #prev-btn { left: -5px; border-top-left-radius: 0; border-bottom-left-radius: 0; }
-            #next-btn { right: -5px; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+            /* Remove as setas no touch */
+            .nav-side-btn { display: none !important; }
 
-            .content-area { padding: 20px 12%; }
-            
-            .chapter-title { font-size: 2rem; }
-            .focus-text { font-size: calc(var(--focus-size) * 0.7); }
+            .content-area { padding: 25px 5%; }
+            .chapter-title { font-size: 1.8rem; margin-bottom: 30px; }
+            .verses-container { padding-bottom: 100px; } /* Espaço extra para scroll final */
+            .focus-text { font-size: calc(var(--focus-size) * 0.6); text-shadow: 0 5px 20px rgba(0,0,0,0.6); }
             .focus-reference { font-size: 1.2rem; }
             
-            #exit-focus-btn { top: 15px; right: 15px; opacity: 0.5; font-size: 0.8rem; padding: 8px 15px; }
-        }
-
-        /* --- TEMA CLARO --- */
-        body.theme-light {
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(0, 0, 0, 0.08);
-            --text-primary: #121212;
-            --text-secondary: #3a3a4a;
-            --accent: #b38800; 
-            background-color: #e2e8f0;
-        }
-
-        body.theme-light .background {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
-        }
-
-        body.theme-light .ambient-light {
-            background: radial-gradient(circle, rgba(179, 136, 0, 0.15) 0%, rgba(255,255,255,0) 70%);
-        }
-
-        body.theme-light header { background: linear-gradient(180deg, rgba(0,0,0,0.03) 0%, transparent 100%); }
-
-        body.theme-light select, 
-        body.theme-light button {
-            background: rgba(0, 0, 0, 0.04);
-            color: var(--text-primary);
-            border-color: rgba(0, 0, 0, 0.1);
-        }
-
-        body.theme-light .settings-panel.active { background: rgba(255, 255, 255, 0.4); }
-
-        body.theme-light .nav-selectors select {
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            color: #121212;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        body.theme-light .nav-selectors select:hover {
-            background: rgba(255, 255, 255, 0.8);
-            border-color: rgba(179, 136, 0, 0.4);
-        }
-
-        body.theme-light #toggle-mode-btn {
-            background: linear-gradient(135deg, rgba(179, 136, 0, 0.15) 0%, rgba(179, 136, 0, 0.05) 100%);
-            border: 1px solid rgba(179, 136, 0, 0.3);
-        }
-
-        body.theme-light select option { background: #f8fafc; color: #121212; }
-
-        body.theme-light button:hover {
-            background: rgba(0, 0, 0, 0.08);
-            border-color: rgba(0, 0, 0, 0.2);
-        }
-
-        body.theme-light .nav-btn { 
-            color: rgba(0, 0, 0, 0.3); 
-            background: rgba(0, 0, 0, 0.03); 
-            border-color: rgba(0, 0, 0, 0.1);
-        }
-        body.theme-light .nav-btn:hover {
-            color: var(--accent);
-            background: linear-gradient(90deg, rgba(0,0,0,0.05) 0%, transparent 100%);
-        }
-        
-        body.theme-light .verse-item.selected {
-            background: linear-gradient(90deg, rgba(179, 136, 0, 0.1) 0%, transparent 100%);
-        }
-        body.theme-light .verse-item.playing {
-            background: linear-gradient(90deg, rgba(0, 0, 0, 0.08) 0%, transparent 100%);
-            border-left: 3px solid #121212;
-            color: #121212;
+            .btn-exit-focus { top: 15px; right: 15px; opacity: 0.6; padding: 10px 16px; border-radius: 12px; }
+            .btn-exit-focus span { display: inline; font-size: 0.85rem;}
         }
     </style>
 </head>
 <body class="mode-chapter">
 
-    <div class="background"></div>
-    <div class="ambient-light"></div>
+    <div class="background-layer"></div>
 
     <div id="app-container">
-        <button id="exit-focus-btn">✖ Sair do Foco</button>
+        <button class="btn-exit-focus" id="exit-focus-btn">
+            <i class="ph-light ph-x"></i> <span>Sair do Foco</span>
+        </button>
 
         <header id="main-header">
             <div class="header-row">
-                <div class="brand">A Palavra</div>
+                <div class="brand-logo"><i class="ph-light ph-crown"></i> A Palavra</div>
         
                 <div class="controls-group">
-                    <button onclick="window.location.href='menu.html'" title="Voltar ao Menu">🏠<span class="btn-text"> Menu</span></button>
-                    
-                    <button id="btn-audio" title="Ouvir Capítulo">▶<span class="btn-text"> Ouvir</span></button>
-                    <button id="theme-btn" title="Alternar Tema">☀️<span class="btn-text"> Tema</span></button>
-                    <button id="toggle-settings-btn" title="Ajustes">⚙️</button>
-                    <button id="toggle-mode-btn">❖<span class="btn-text"> Foco</span></button>
+                    <a href="menu.html" class="btn" title="Voltar ao Menu">
+                        <i class="ph-light ph-house"></i><span>Menu</span>
+                    </a>
+                    <button id="btn-audio" class="btn btn-audio" title="Ouvir Capítulo">
+                        <i class="ph-light ph-play"></i><span>Ouvir</span>
+                    </button>
+                    <button id="theme-btn" class="btn" title="Alternar Tema">
+                        <i class="ph-light ph-sun"></i><span>Tema</span>
+                    </button>
+                    <button id="toggle-settings-btn" class="btn" title="Ajustes">
+                        <i class="ph-light ph-sliders-horizontal"></i>
+                    </button>
+                    <button id="toggle-mode-btn" class="btn btn-focus">
+                        <i class="ph-light ph-scan"></i><span>Foco</span>
+                    </button>
                 </div>
             </div>
 
@@ -548,27 +520,30 @@
 
             <div class="settings-panel" id="settings-panel">
                 <select id="version-select" title="Versão da Bíblia">
-                    <option value="pt_acf">ACF</option>
-                    <option value="pt_nvi">NVI</option>
+                    <option value="pt_acf">ACF (Almeida Corrigida)</option>
+                    <option value="pt_nvi">NVI (Nova Versão)</option>
                 </select>
                 <select id="font-select" title="Tipo de Fonte">
-                    <option value="'Playfair Display', serif">Playfair</option>
-                    <option value="'Lora', serif">Lora</option>
-                    <option value="'Roboto', sans-serif">Roboto</option>
+                    <option value="'Playfair Display', serif">Playfair (Clássica)</option>
+                    <option value="'Lora', serif">Lora (Suave)</option>
+                    <option value="'Inter', sans-serif">Inter (Moderna)</option>
                 </select>
-                <div class="controls-group">
-                    <button id="btn-size-down" title="Diminuir">A-</button>
-                    <button id="btn-size-up" title="Aumentar">A+</button>
+                <div class="controls-group" style="flex-wrap: nowrap; gap: 10px;">
+                    <button id="btn-size-down" class="btn" title="Diminuir Fonte" style="flex:1;"><i class="ph-light ph-text-aa"></i>-</button>
+                    <button id="btn-size-up" class="btn" title="Aumentar Fonte" style="flex:1;"><i class="ph-light ph-text-aa"></i>+</button>
                 </div>
             </div>
         </header>
 
         <main id="main-area">
-    
-            <button class="nav-btn" id="prev-btn">❮</button>
+            
+            <button class="nav-side-btn" id="prev-btn"><i class="ph-light ph-caret-left"></i></button>
             
             <div class="content-area" id="content-area">
-                <div id="loading-msg" class="loading">Desdobrando os Pergaminhos...</div>
+                <div id="loading-msg" class="loader-container">
+                    <div class="loader-ring"></div>
+                    <div>Desdobrando os Pergaminhos...</div>
+                </div>
                 
                 <div class="verses-container" id="chapter-view">
                     <h2 class="chapter-title" id="chapter-title"></h2>
@@ -581,7 +556,7 @@
                 </div>
             </div>
 
-            <button class="nav-btn" id="next-btn">❯</button>
+            <button class="nav-side-btn" id="next-btn"><i class="ph-light ph-caret-right"></i></button>
         </main>
     </div>
 
@@ -628,8 +603,13 @@
         // Toggle Painel de Configurações
         toggleSettingsBtn.addEventListener('click', () => {
             settingsPanel.classList.toggle('active');
-            toggleSettingsBtn.style.background = settingsPanel.classList.contains('active') ? 'rgba(212, 175, 55, 0.2)' : '';
-            toggleSettingsBtn.style.borderColor = settingsPanel.classList.contains('active') ? 'rgba(212, 175, 55, 0.4)' : '';
+            if(settingsPanel.classList.contains('active')) {
+                toggleSettingsBtn.style.background = 'var(--accent)';
+                toggleSettingsBtn.style.color = 'var(--bg-color)';
+            } else {
+                toggleSettingsBtn.style.background = '';
+                toggleSettingsBtn.style.color = '';
+            }
         });
 
         window.speechSynthesis.onvoiceschanged = () => {
@@ -652,6 +632,13 @@
             localStorage.setItem('biblePremiumData', JSON.stringify(data));
         }
 
+        function updateThemeIcon() {
+            const isLight = body.classList.contains('theme-light');
+            themeBtn.innerHTML = isLight 
+                ? '<i class="ph-light ph-moon"></i><span>Tema</span>' 
+                : '<i class="ph-light ph-sun"></i><span>Tema</span>';
+        }
+
         function loadProgress() {
             const saved = localStorage.getItem('biblePremiumData');
             if (saved) {
@@ -672,8 +659,8 @@
 
                     if (data.isLightMode) {
                         body.classList.add('theme-light');
-                        themeBtn.innerHTML = '🌙<span class="btn-text"> Tema</span>';
                     }
+                    updateThemeIcon();
 
                     if (isFocusMode) {
                         body.classList.remove('mode-chapter');
@@ -701,7 +688,7 @@
                 populateBooks();
                 renderView();
             } catch (error) {
-                loadingMsg.textContent = "Falha ao baixar. Verifique sua conexão.";
+                loadingMsg.innerHTML = "Falha ao baixar os textos. Verifique sua conexão.";
             }
         }
 
@@ -734,8 +721,8 @@
         function stopAudio() {
             window.speechSynthesis.cancel();
             isPlayingAudio = false;
-            btnAudio.innerHTML = '▶<span class="btn-text"> Ouvir</span>';
-            btnAudio.style.color = 'var(--accent)';
+            btnAudio.innerHTML = '<i class="ph-light ph-play"></i><span>Ouvir</span>';
+            btnAudio.classList.remove('is-playing');
             document.querySelectorAll('.verse-item').forEach(el => el.classList.remove('playing'));
         }
 
@@ -779,8 +766,8 @@
             });
 
             isPlayingAudio = true;
-            btnAudio.innerHTML = '⏸<span class="btn-text"> Parar</span>';
-            btnAudio.style.color = '#fff';
+            btnAudio.innerHTML = '<i class="ph-light ph-pause"></i><span>Parar</span>';
+            btnAudio.classList.add('is-playing');
         }
 
         btnAudio.addEventListener('click', playChapter);
@@ -924,8 +911,38 @@
         nextBtn.addEventListener('click', goNext);
         prevBtn.addEventListener('click', goPrev);
 
+        // --- CONTROLES DE DESLIZE (SWIPE) PARA CELULAR ---
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+
+        mainArea.addEventListener('touchstart', function(event) {
+            touchStartX = event.changedTouches[0].screenX;
+            touchStartY = event.changedTouches[0].screenY;
+        }, { passive: true });
+
+        mainArea.addEventListener('touchend', function(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            touchEndY = event.changedTouches[0].screenY;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+            
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 50) {
+                    goNext();
+                } else if (diffX < -50) {
+                    goPrev();
+                }
+            }
+        }
+
         mainArea.addEventListener('click', (e) => {
-            if (isFocusMode && e.target.id !== 'exit-focus-btn') {
+            if (isFocusMode && e.target.id !== 'exit-focus-btn' && !e.target.closest('#exit-focus-btn')) {
                 const screenWidth = window.innerWidth;
                 if (e.clientX < screenWidth / 2) goPrev(); 
                 else goNext(); 
@@ -940,8 +957,7 @@
 
         themeBtn.addEventListener('click', () => {
             body.classList.toggle('theme-light');
-            const isLight = body.classList.contains('theme-light');
-            themeBtn.innerHTML = isLight ? '🌙<span class="btn-text"> Tema</span>' : '☀️<span class="btn-text"> Tema</span>';
+            updateThemeIcon();
             saveProgress();
         });
 
