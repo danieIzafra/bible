@@ -1,0 +1,15 @@
+{
+  "name": "Bíblia Premium - A Palavra",
+  "short_name": "A Palavra",
+  "start_url": "./menu.html",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#d4af37",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3073/3073385.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
