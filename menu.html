@@ -7,395 +7,535 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="A Palavra">
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="manifest" href="manifest.json">
     
     <style>
         /* ==========================================
-           VARIÁVEIS PADRÃO BIBLE.HTML (DARK & GOLD)
+           ARQUITETURA DE VARIÁVEIS (ROSE GOLD LUXURY)
            ========================================== */
         :root {
-            --glass-bg: rgba(20, 25, 30, 0.4);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --text-primary: #fdfdfd;
-            --text-secondary: #c9d1d9;
-            --accent: #d4af37;
+            /* Cores Dark Mode (Padrão) */
+            --bg-color: #141113; /* Fundo escuro levemente quente */
+            --glass-bg: rgba(36, 28, 33, 0.45);
+            --glass-border: rgba(229, 178, 153, 0.15);
+            --glass-highlight: rgba(255, 255, 255, 0.1);
             
-            --bible-font: 'Playfair Display', serif;
+            --text-primary: #F8F4F1;
+            --text-secondary: #C8B9B2;
+            
+            --accent: #E5B299; /* Rose Gold / Pêssego Elegante */
+            --accent-glow: rgba(229, 178, 153, 0.25);
+            --accent-hover: #F2C9B6;
+            
+            /* Tipografia */
+            --title-font: 'Cinzel', serif;
+            --quote-font: 'Playfair Display', serif;
+            --body-font: 'Inter', sans-serif;
+            
+            /* Espaçamentos e Raios */
+            --radius-sm: 12px;
+            --radius-md: 24px;
+            --radius-lg: 32px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Reset e Configurações Base */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body, html {
             height: 100%;
             width: 100%;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--body-font);
             color: var(--text-primary);
-            background-color: #050505;
+            background-color: var(--bg-color);
             overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
-        /* --- BACKGROUND CINEMÁTICO (Idêntico ao bible.html) --- */
-        .background {
+        /* --- BACKGROUND CINEMÁTICO & GLOW --- */
+        .background-layer {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #31102f 100%);
-            background-size: 200% 200%;
-            animation: breathe 15s ease infinite alternate;
+            background: radial-gradient(circle at 80% -20%, var(--accent-glow) 0%, transparent 40%),
+                        radial-gradient(circle at 20% 120%, rgba(229, 178, 153, 0.1) 0%, transparent 50%);
             z-index: -2;
         }
 
-        .ambient-light {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80vw; height: 80vh;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(0,0,0,0) 70%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        @keyframes breathe {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-        }
-
-        /* --- CONTAINER PRINCIPAL --- */
-        #app-container {
+        /* --- LAYOUT PRINCIPAL APP --- */
+        .app-wrapper {
             display: flex;
             flex-direction: column;
             min-height: 100%;
             width: 100%;
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            transition: all 0.6s ease;
+            transition: all 0.5s ease;
         }
 
-        /* --- CABEÇALHO --- */
+        /* --- HEADER NAVBAR --- */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 40px;
+            padding: 20px 5%;
+            background: rgba(20, 17, 19, 0.6);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border-bottom: 1px solid var(--glass-border);
-            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
             position: sticky;
             top: 0;
-            z-index: 50;
+            z-index: 100;
         }
 
-        .brand {
-            font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
-            font-weight: 600;
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--title-font);
+            font-size: 1.4rem;
             color: var(--accent);
             text-transform: uppercase;
             letter-spacing: 3px;
         }
 
-        .controls-group { display: flex; gap: 10px; align-items: center; }
+        .brand-logo i { font-size: 1.8rem; }
 
-        button {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
+        /* Botões Globais */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-family: var(--body-font);
             font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
             outline: none;
+            min-height: 44px; /* Touch-friendly mobile */
+        }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            text-decoration: none;
-            font-weight: 500;
         }
 
-        button:hover, .btn-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            transform: translateY(-2px);
         }
 
-        .btn-accent {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.05) 100%);
-            border: 1px solid rgba(212, 175, 55, 0.4);
+        .btn-primary {
+            background: linear-gradient(135deg, rgba(229, 178, 153, 0.15) 0%, rgba(229, 178, 153, 0.05) 100%);
+            border: 1px solid rgba(229, 178, 153, 0.5);
             color: var(--accent);
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, rgba(229, 178, 153, 0.25) 0%, rgba(229, 178, 153, 0.1) 100%);
+            color: #fff;
+            box-shadow: 0 8px 25px var(--accent-glow);
+            border-color: var(--accent-hover);
+        }
+
+        /* --- CONTEÚDO CENTRAL --- */
+        main {
+            flex: 1;
+            padding: 40px 5% 80px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        /* Títulos de Seção */
+        .section-header {
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-family: var(--title-font);
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title i { color: var(--accent); }
+
+        /* --- COMPONENTE: DEVOCIONAL EM DESTAQUE --- */
+        .devotional-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid var(--glass-highlight);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 0 20px rgba(229, 178, 153, 0.05);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Detalhe de luxo no card */
+        .devotional-card::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; width: 150px; height: 150px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+
+        .ai-content { position: relative; z-index: 2; }
+        
+        .ai-content h3 {
+            font-family: var(--title-font);
+            color: var(--accent);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+        }
+        
+        .ai-content p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        
+        .ai-content blockquote {
+            font-family: var(--quote-font);
+            font-size: 1.4rem;
+            font-style: italic;
+            color: var(--text-primary);
+            padding: 24px 30px;
+            margin: 30px 0;
+            border-left: 2px solid var(--accent);
+            background: linear-gradient(90deg, rgba(229, 178, 153, 0.08) 0%, transparent 100%);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+
+        /* --- COMPONENTE: GRID DE TEMAS --- */
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .theme-item {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 30px 25px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(229, 178, 153, 0.4);
+            background: linear-gradient(145deg, rgba(229, 178, 153, 0.08) 0%, rgba(255,255,255,0.02) 100%);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2), 0 0 20px var(--accent-glow);
+        }
+
+        .theme-icon {
+            width: 56px; height: 56px;
+            border-radius: 16px;
+            background: rgba(229, 178, 153, 0.1);
+            color: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border: 1px solid rgba(229, 178, 153, 0.2);
+            transition: transform 0.4s ease;
+        }
+
+        .theme-item:hover .theme-icon { transform: scale(1.1) rotate(-5deg); background: var(--accent); color: var(--bg-color); }
+
+        .theme-title {
+            font-family: var(--title-font);
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
-        .btn-accent:hover {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.1) 100%);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-            color: #fff;
-        }
-
-        /* --- CONTEÚDO --- */
-        main { flex: 1; padding: 50px 5%; max-width: 1100px; margin: 0 auto; width: 100%; }
-
-        .section-title {
-            font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
-            color: var(--accent);
-            text-align: center;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-
-        .section-subtitle {
-            text-align: center;
+        .theme-subtitle {
+            font-size: 0.85rem;
             color: var(--text-secondary);
-            font-size: 1.1rem;
-            margin-bottom: 60px;
-            font-family: var(--bible-font);
-            font-style: italic;
+            font-weight: 300;
+            line-height: 1.5;
         }
 
-        /* --- GRID DE TEMAS (Glassmorphism Luxo) --- */
-        .themes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 80px;
+        /* --- MODAL DE LEITURA (GLASSMORPHISM EXTREMO) --- */
+        .modal-wrapper {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(10, 8, 9, 0.7);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; z-index: 1000; padding: 20px;
+            transition: opacity 0.4s ease;
         }
 
-        .theme-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 30px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
+        .modal-wrapper.is-open { opacity: 1; pointer-events: all; }
 
-        .theme-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(212, 175, 55, 0.4);
-            transform: translateY(-5px);
-            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.1);
-        }
-
-        .theme-icon { font-size: 2rem; margin-bottom: 15px; display: block; filter: grayscale(20%); }
-        .theme-name { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--text-primary); font-weight: 600; margin-bottom: 8px; letter-spacing: 1px; }
-        .theme-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
-
-        /* --- DEVOCIONAL DIÁRIO --- */
-        .devotional-section {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--glass-border);
-            border-radius: 15px;
-            padding: 40px;
+        .modal-box {
+            background: rgba(28, 23, 26, 0.85);
+            width: 100%; max-width: 650px; max-height: 85vh;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(229, 178, 153, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 50px 40px;
+            overflow-y: auto;
+            transform: translateY(40px) scale(0.95);
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
             position: relative;
         }
 
-        .ai-content h3 { font-family: 'Cinzel', serif; color: var(--accent); font-size: 1.6rem; margin-bottom: 20px; letter-spacing: 1px; }
-        .ai-content p { line-height: 1.8; margin-bottom: 15px; font-size: 1.1rem; color: var(--text-secondary); }
-        .ai-content blockquote {
-            font-family: var(--bible-font); font-size: 1.3rem; font-style: italic;
-            border-left: 3px solid var(--accent); padding: 15px 25px;
-            background: linear-gradient(90deg, rgba(212, 175, 55, 0.08) 0%, transparent 100%);
-            margin: 25px 0; color: #fff; border-radius: 0 8px 8px 0;
-        }
+        .modal-wrapper.is-open .modal-box { transform: translateY(0) scale(1); }
 
-        /* --- MODAL --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        .btn-close {
+            position: absolute; top: 20px; right: 20px;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
             display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: 0.4s ease; z-index: 1000; padding: 20px;
+            font-size: 1.2rem; cursor: pointer; transition: all 0.3s;
         }
 
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .btn-close:hover { background: var(--accent); color: var(--bg-color); border-color: var(--accent); transform: rotate(90deg); }
 
-        .modal-content {
-            background: #0d1117;
-            width: 100%; max-width: 750px; max-height: 85vh;
-            border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.3);
-            padding: 40px; overflow-y: auto;
-            transform: translateY(20px); transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6); position: relative;
-        }
-
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-
-        .close-modal {
-            position: absolute; top: 15px; right: 15px;
-            background: transparent; border: none; color: var(--text-secondary);
-            font-size: 1.5rem; cursor: pointer; padding: 5px 15px; border-radius: 8px;
-        }
-        .close-modal:hover { color: var(--accent); background: rgba(255,255,255,0.05); }
-
-        /* Loading */
-        .loading-spinner { text-align: center; padding: 40px 0; color: var(--accent); font-family: 'Cinzel', serif; font-size: 1.2rem; }
-        .loading-spinner .spinner {
-            width: 40px; height: 40px; border: 3px solid rgba(212, 175, 55, 0.2);
-            border-top-color: var(--accent); border-radius: 50%;
-            animation: spin 1s linear infinite; margin: 0 auto 20px auto;
+        /* Loader Elegante */
+        .loader-container { text-align: center; padding: 40px 0; color: var(--accent); font-family: var(--title-font); letter-spacing: 2px;}
+        .loader-ring {
+            width: 50px; height: 50px; margin: 0 auto 20px;
+            border: 2px solid rgba(229, 178, 153, 0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(229, 178, 153, 0.3); border-radius: 10px; }
 
-        /* --- TEMA CLARO (Idêntico ao bible.html) --- */
+        /* --- TEMA CLARO (SOFT BLUSH / NUDE) --- */
         body.theme-light {
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(0, 0, 0, 0.08);
-            --text-primary: #121212;
-            --text-secondary: #3a3a4a;
-            --accent: #b38800; 
-            background-color: #e2e8f0;
+            --bg-color: #FDFBFA;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(229, 178, 153, 0.4);
+            --glass-highlight: rgba(255, 255, 255, 0.9);
+            --text-primary: #2C2421;
+            --text-secondary: #7A6A63;
+            --accent: #D48C70; 
+            --accent-glow: rgba(212, 140, 112, 0.15);
+            --accent-hover: #B87358;
         }
 
-        body.theme-light .background { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%); }
-        body.theme-light .ambient-light { background: radial-gradient(circle, rgba(179, 136, 0, 0.15) 0%, rgba(255,255,255,0) 70%); }
-        body.theme-light header { background: linear-gradient(180deg, rgba(0,0,0,0.03) 0%, transparent 100%); }
-        
-        body.theme-light button { background: rgba(0, 0, 0, 0.04); border-color: rgba(0, 0, 0, 0.1); color: var(--text-primary); }
-        body.theme-light button:hover { background: rgba(0, 0, 0, 0.08); border-color: rgba(0, 0, 0, 0.2); }
-        
-        body.theme-light .btn-accent { background: linear-gradient(135deg, rgba(179, 136, 0, 0.15) 0%, rgba(179, 136, 0, 0.05) 100%); border-color: rgba(179, 136, 0, 0.3); }
-        body.theme-light .btn-accent:hover { color: #121212; }
+        body.theme-light header { background: rgba(253, 251, 250, 0.8); }
+        body.theme-light .btn-glass { background: rgba(255, 255, 255, 0.8); color: var(--text-primary); border-color: rgba(212, 140, 112, 0.3); }
+        body.theme-light .btn-glass:hover { background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        body.theme-light .devotional-card { background: rgba(255, 255, 255, 0.85); box-shadow: 0 15px 35px rgba(212, 140, 112, 0.08); }
+        body.theme-light .theme-item { background: rgba(255, 255, 255, 0.6); box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+        body.theme-light .theme-item:hover { background: #fff; box-shadow: 0 15px 35px rgba(212, 140, 112, 0.15); }
+        body.theme-light .modal-box { background: rgba(255, 252, 250, 0.95); border-color: var(--accent); }
 
-        body.theme-light .theme-card { background: rgba(255, 255, 255, 0.5); border-color: rgba(0,0,0,0.1); }
-        body.theme-light .theme-card:hover { background: rgba(255, 255, 255, 0.8); border-color: rgba(179, 136, 0, 0.4); }
-
-        body.theme-light .devotional-section { background: rgba(255, 255, 255, 0.4); }
-        body.theme-light .ai-content blockquote { color: #121212; background: linear-gradient(90deg, rgba(179, 136, 0, 0.1) 0%, transparent 100%); }
-        body.theme-light .modal-content { background: #f0f2f5; border-color: rgba(179, 136, 0, 0.3); }
-
-        /* --- MOBILE --- */
+        /* --- RESPONSIVIDADE EXTREMA (MOBILE-FIRST FEEL) --- */
         @media (max-width: 768px) {
-            header { padding: 15px; }
-            .brand { font-size: 1.4rem; }
-            .btn-text { display: none; }
-            main { padding: 30px 5%; }
-            .section-title { font-size: 2rem; }
-            .themes-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .theme-card { padding: 20px 10px; }
-            .theme-icon { font-size: 1.8rem; }
-            .theme-name { font-size: 1rem; }
-            .devotional-section { padding: 25px 20px; }
-            .modal-content { padding: 30px 20px; }
+            header { padding: 15px 20px; }
+            .brand-logo { font-size: 1.1rem; letter-spacing: 1px; }
+            .brand-logo i { font-size: 1.4rem; }
+            .btn span { display: none; } /* Esconde o texto, deixa só ícone no mobile */
+            .btn { padding: 10px; width: 44px; justify-content: center; border-radius: 12px; }
+            .btn i { font-size: 1.4rem; margin: 0; }
+            
+            main { padding: 25px 20px 40px; gap: 40px; }
+            
+            .section-title { font-size: 1.5rem; }
+            .devotional-card { padding: 30px 25px; border-radius: var(--radius-md); }
+            .ai-content h3 { font-size: 1.3rem; }
+            .ai-content p { font-size: 1rem; }
+            .ai-content blockquote { font-size: 1.1rem; padding: 20px; margin: 20px 0; }
+            
+            .themes-grid { grid-template-columns: 1fr; gap: 15px; }
+            .theme-item { flex-direction: row; align-items: center; padding: 20px; border-radius: 20px; gap: 20px; }
+            .theme-icon { margin-bottom: 0; width: 48px; height: 48px; font-size: 1.4rem; flex-shrink: 0; }
+            .theme-title { font-size: 1.05rem; margin-bottom: 4px; }
+            .theme-subtitle { font-size: 0.8rem; }
+            
+            .modal-box { padding: 35px 25px; border-radius: 24px; }
+            .btn-close { top: 15px; right: 15px; width: 36px; height: 36px; }
         }
     </style>
 </head>
-<body class="mode-chapter">
+<body>
 
-    <div class="background"></div>
-    <div class="ambient-light"></div>
+    <div class="background-layer"></div>
 
-    <div id="app-container">
+    <div class="app-wrapper">
         <header>
-            <div class="brand">A Palavra</div>
-            <div class="controls-group">
-                <button id="theme-btn" title="Alternar Tema">☀️<span class="btn-text"> Tema</span></button>
-                <a href="bible.html" class="btn-accent" style="text-decoration: none; padding: 10px 16px; border-radius: 8px;">📖<span class="btn-text"> Bíblia</span></a>
+            <div class="brand-logo">
+                <i class="ph-light ph-crown"></i> A Palavra
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button id="theme-btn" class="btn btn-glass" title="Alternar Tema">
+                    <i class="ph-light ph-sun"></i><span>Tema</span>
+                </button>
+                <a href="bible.html" class="btn btn-primary">
+                    <i class="ph-light ph-books"></i><span>Acessar Bíblia</span>
+                </a>
             </div>
         </header>
 
         <main>
-            <h1 class="section-title">O que seu coração busca hoje?</h1>
-            <p class="section-subtitle">Escolha um tema e receba uma palavra preparada especialmente para você.</p>
-            
-            <div class="themes-grid">
-                <div class="theme-card" onclick="openTopic('Salvação', '🤍')">
-                    <span class="theme-icon">🤍</span>
-                    <div class="theme-name">Salvação</div>
-                    <div class="theme-desc">Graça e redenção</div>
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title"><i class="ph-light ph-sparkle"></i> Palavra do Dia</h2>
                 </div>
-                
-                <div class="theme-card" onclick="openTopic('Amor', '🌹')">
-                    <span class="theme-icon">🌹</span>
-                    <div class="theme-name">Amor</div>
-                    <div class="theme-desc">O cuidado perfeito</div>
+                <div class="devotional-card">
+                    <div id="devocional-content" class="ai-content">
+                        <div class="loader-container">
+                            <div class="loader-ring"></div>
+                            <div>Preparando sua mensagem...</div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="theme-card" onclick="openTopic('Prosperidade', '✨')">
-                    <span class="theme-icon">✨</span>
-                    <div class="theme-name">Prosperidade</div>
-                    <div class="theme-desc">Caminhos e provisões</div>
-                </div>
-                
-                <div class="theme-card" onclick="openTopic('Adversidade', '🕊️')">
-                    <span class="theme-icon">🕊️</span>
-                    <div class="theme-name">Adversidade</div>
-                    <div class="theme-desc">Força nas tempestades</div>
-                </div>
-                
-                <div class="theme-card" style="grid-column: 1 / -1;" onclick="openTopic('Reflexão sobre a Vida', '⏳')">
-                    <span class="theme-icon">⏳</span>
-                    <div class="theme-name">Reflexão sobre a Vida</div>
-                    <div class="theme-desc">Sabedoria e propósito no caminhar diário.</div>
-                </div>
-            </div>
+            </section>
 
-            <section class="devotional-section">
-                <div id="devocional-content" class="ai-content">
-                    <div class="loading-spinner">
-                        <div class="spinner"></div>
-                        <div>Desdobrando os Pergaminhos...</div>
+            <section>
+                <div class="section-header" style="margin-top: 10px;">
+                    <h2 class="section-title" style="font-size: 1.4rem;"><i class="ph-light ph-compass"></i> Explorar Temas</h2>
+                </div>
+                <div class="themes-grid">
+                    <div class="theme-item" onclick="openTopic('Salvação', 'ph-dove')">
+                        <div class="theme-icon"><i class="ph-light ph-dove"></i></div>
+                        <div>
+                            <div class="theme-title">Salvação</div>
+                            <div class="theme-subtitle">Renovo, graça e redenção para a alma.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="theme-item" onclick="openTopic('Amor', 'ph-heart-straight')">
+                        <div class="theme-icon"><i class="ph-light ph-heart-straight"></i></div>
+                        <div>
+                            <div class="theme-title">Amor</div>
+                            <div class="theme-title" style="display:none;"></div> <div class="theme-subtitle">O cuidado perfeito que lança fora o medo.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="theme-item" onclick="openTopic('Prosperidade', 'ph-plant')">
+                        <div class="theme-icon"><i class="ph-light ph-plant"></i></div>
+                        <div>
+                            <div class="theme-title">Prosperidade</div>
+                            <div class="theme-subtitle">Sabedoria e frutos abundantes no caminho.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="theme-item" onclick="openTopic('Adversidade', 'ph-anchor')">
+                        <div class="theme-icon"><i class="ph-light ph-anchor"></i></div>
+                        <div>
+                            <div class="theme-title">Adversidade</div>
+                            <div class="theme-subtitle">Força inabalável nas tempestades da vida.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="theme-item" onclick="openTopic('Sabedoria Diária', 'ph-hourglass-high')">
+                        <div class="theme-icon"><i class="ph-light ph-hourglass-high"></i></div>
+                        <div>
+                            <div class="theme-title">Sabedoria Diária</div>
+                            <div class="theme-subtitle">Luz e propósito para guiar suas decisões.</div>
+                        </div>
+                    </div>
+
+                    <div class="theme-item" onclick="openTopic('Paz Interior', 'ph-cloud-sun')">
+                        <div class="theme-icon"><i class="ph-light ph-cloud-sun"></i></div>
+                        <div>
+                            <div class="theme-title">Paz Interior</div>
+                            <div class="theme-subtitle">Tranquilidade que excede o entendimento.</div>
+                        </div>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <div class="modal-overlay" id="reflection-modal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeModal()">✖</button>
+    <div class="modal-wrapper" id="content-modal">
+        <div class="modal-box">
+            <button class="btn-close" onclick="closeModal()"><i class="ph-light ph-x"></i></button>
             <div id="modal-body" class="ai-content">
                 </div>
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="bible.html" class="btn-accent" style="text-decoration: none; padding: 12px 24px; border-radius: 8px; display: inline-block;">Ir para a Leitura Completa</a>
+            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--glass-border);">
+                <a href="bible.html" class="btn btn-primary" style="width: 100%; border-radius: 16px;">
+                    Ir para Leitura Completa
+                </a>
             </div>
         </div>
     </div>
 
     <script>
         // ==========================================
-        // CONFIGURAÇÃO DA API (COLOQUE A SUA AQUI)
+        // CONFIGURAÇÃO DA API 
         // ==========================================
-        const GEMINI_API_KEY = 'AIzaSyCMEQB4UIQKeRsNMlmeDbLAz54gjtE8TKw';
+        const GEMINI_API_KEY = 'AIzaSyAL1U3l7yhf9mq9-Uqjk3ukIArOHEJ7eWE'; 
 
         // ==========================================
-        // 1. LÓGICA DO TEMA (Idêntico ao bible.html)
+        // 1. GERENCIAMENTO DE TEMA (SINCRONIZADO)
         // ==========================================
         const themeBtn = document.getElementById('theme-btn');
         const body = document.body;
 
-        // Recupera o tema se o usuário já escolheu no bible.html ou menu.html
-        function loadTheme() {
-            const saved = localStorage.getItem('biblePremiumData');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    if (data.isLightMode) {
-                        body.classList.add('theme-light');
-                        themeBtn.innerHTML = '🌙<span class="btn-text"> Tema</span>';
-                    }
-                } catch (e) {}
+        function updateThemeUI(isLight) {
+            if(isLight) {
+                themeBtn.innerHTML = '<i class="ph-light ph-moon"></i><span>Tema Escuro</span>';
+                body.classList.add('theme-light');
+            } else {
+                themeBtn.innerHTML = '<i class="ph-light ph-sun"></i><span>Tema Claro</span>';
+                body.classList.remove('theme-light');
             }
         }
 
+        function loadTheme() {
+            try {
+                const saved = JSON.parse(localStorage.getItem('biblePremiumData'));
+                if (saved && saved.isLightMode) updateThemeUI(true);
+            } catch (e) {}
+        }
+
         themeBtn.addEventListener('click', () => {
-            body.classList.toggle('theme-light');
-            const isLight = body.classList.contains('theme-light');
-            themeBtn.innerHTML = isLight ? '🌙<span class="btn-text"> Tema</span>' : '☀️<span class="btn-text"> Tema</span>';
-            
-            // Salva na mesma estrutura do bible.html para sincronizar
-            let data = {};
-            try { data = JSON.parse(localStorage.getItem('biblePremiumData')) || {}; } catch(e){}
-            data.isLightMode = isLight;
-            localStorage.setItem('biblePremiumData', JSON.stringify(data));
+            const isLight = !body.classList.contains('theme-light');
+            updateThemeUI(isLight);
+            try {
+                let data = JSON.parse(localStorage.getItem('biblePremiumData')) || {};
+                data.isLightMode = isLight;
+                localStorage.setItem('biblePremiumData', JSON.stringify(data));
+            } catch(e){}
         });
 
         loadTheme();
@@ -403,37 +543,37 @@
         // ==========================================
         // 2. LÓGICA DO MODAL
         // ==========================================
-        const modal = document.getElementById('reflection-modal');
+        const modal = document.getElementById('content-modal');
         const modalBody = document.getElementById('modal-body');
 
-        function closeModal() { modal.classList.remove('active'); }
+        function closeModal() { modal.classList.remove('is-open'); }
         modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
 
         // ==========================================
-        // 3. GERAÇÃO COM IA (TEMAS CLICADOS)
+        // 3. IA: GERAÇÃO DE TEMAS
         // ==========================================
-        async function openTopic(topicName, icon) {
-            modal.classList.add('active');
+        async function openTopic(topicName, iconClass) {
+            modal.classList.add('is-open');
             
             modalBody.innerHTML = `
-                <div class="loading-spinner">
-                    <div class="spinner"></div>
+                <div class="loader-container">
+                    <div class="loader-ring"></div>
                     <div>Buscando sabedoria sobre ${topicName}...</div>
                 </div>
             `;
 
             if(GEMINI_API_KEY === 'COLOQUE_SUA_API_AQUI') {
-                modalBody.innerHTML = `<p style="color: var(--accent); text-align: center;">Por favor, insira sua chave da API do Gemini no código para ativar esta função divina.</p>`;
+                modalBody.innerHTML = `<p style="color: var(--accent); text-align: center;">Chave API ausente.</p>`;
                 return;
             }
 
             const promptText = `
-                Você é um conselheiro cristão sábio. Escreva uma reflexão profunda, mas direta, sobre o tema "${topicName}".
-                Estrutura OBRIGATÓRIA em HTML puro (sem crases de markdown):
-                <h3>${icon} Sabedoria sobre ${topicName}</h3>
-                <p>[Um parágrafo de introdução acolhedora]</p>
+                Aja como um conselheiro sábio e reconfortante. Escreva uma reflexão encorajadora sobre "${topicName}".
+                Retorne APENAS HTML puro (sem markdown). Estrutura:
+                <h3><i class="ph-light ${iconClass}"></i> Sabedoria sobre ${topicName}</h3>
+                <p>[Introdução acolhedora e elegante]</p>
                 <blockquote>[Um versículo bíblico forte sobre o tema, com a referência]</blockquote>
-                <p>[Um parágrafo de aplicação prática para a vida]</p>
+                <p>[Aplicação prática e inspiradora para a vida]</p>
             `;
 
             try {
@@ -443,49 +583,41 @@
                     body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
                 });
 
-                if (!response.ok) throw new Error('Falha na API');
+                if (!response.ok) throw new Error('API Error');
                 
                 const data = await response.json();
-                let rawHtml = data.candidates[0].content.parts[0].text;
-                rawHtml = rawHtml.replace(/```html/g, '').replace(/```/g, ''); 
-                
-                modalBody.innerHTML = rawHtml;
+                let html = data.candidates[0].content.parts[0].text;
+                modalBody.innerHTML = html.replace(/```html|```/g, ''); 
             } catch (error) {
-                modalBody.innerHTML = `<p>Houve um erro ao buscar a palavra. Sinta a paz e tente novamente.</p>`;
+                modalBody.innerHTML = `<p style="text-align:center;">Houve um erro. Sinta a paz e tente novamente.</p>`;
             }
         }
 
         // ==========================================
-        // 4. GERAÇÃO COM IA (DEVOCIONAL DIÁRIO)
+        // 4. IA: DEVOCIONAL DO DIA (DESTAQUE)
         // ==========================================
-        async function generateDevotional() {
-            const contentDiv = document.getElementById('devocional-content');
+        async function loadDailyDevotional() {
+            const container = document.getElementById('devocional-content');
             const today = new Date().toLocaleDateString('pt-BR');
-            const cachedData = localStorage.getItem('premiumDevotionalData');
+            const cached = localStorage.getItem('premiumDevotionalData');
             
-            if (cachedData) {
-                const parsedData = JSON.parse(cachedData);
-                if (parsedData.date === today) {
-                    contentDiv.innerHTML = parsedData.html;
+            if (cached) {
+                const data = JSON.parse(cached);
+                if (data.date === today) {
+                    container.innerHTML = data.html;
                     return;
                 }
             }
 
-            if(GEMINI_API_KEY === 'COLOQUE_SUA_API_AQUI') {
-                contentDiv.innerHTML = `
-                    <h3 style="margin-bottom: 20px;">O Devocional de Hoje</h3>
-                    <p style="color: var(--text-secondary);">Insira a chave da API do Gemini na linha 270 do código para gerar histórias e devocionais diários automaticamente.</p>`;
-                return;
-            }
+            if(GEMINI_API_KEY === 'COLOQUE_SUA_API_AQUI') return;
 
             const promptText = `
-                Aja como um pastor sábio. Escreva um devocional diário sofisticado.
-                Sorteie aleatoriamente uma história bíblica inspiradora (ex: Davi e Golias, Rute, Ester, o filho pródigo, Zaqueu...).
-                Estrutura OBRIGATÓRIA em HTML puro (sem markdown):
-                <h3>O Devocional de Hoje</h3>
-                <p>[Conte a história resumida de forma cativante em 1 parágrafo longo]</p>
-                <blockquote>[Cite o versículo chave dessa história]</blockquote>
-                <p>[Faça uma reflexão profunda sobre como aplicar essa atitude na nossa vida diária em 1 parágrafo]</p>
+                Escreva um devocional diário inspirador. Escolha uma história bíblica de superação ou sabedoria.
+                Retorne APENAS HTML puro. Estrutura:
+                <h3><i class="ph-light ph-scroll"></i> Inspiração de Hoje</h3>
+                <p>[História contada de forma envolvente e profunda em 1 parágrafo longo]</p>
+                <blockquote>[Versículo chave da história]</blockquote>
+                <p>[Reflexão encorajadora aplicando isso à nossa vida moderna]</p>
             `;
 
             try {
@@ -495,22 +627,18 @@
                     body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
                 });
 
-                if (!response.ok) throw new Error('Falha na API');
-
-                const data = await response.json();
-                let rawHtml = data.candidates[0].content.parts[0].text;
-                rawHtml = rawHtml.replace(/```html/g, '').replace(/```/g, '');
-
-                localStorage.setItem('premiumDevotionalData', JSON.stringify({ date: today, html: rawHtml }));
-                contentDiv.innerHTML = rawHtml;
-
+                if (response.ok) {
+                    const data = await response.json();
+                    let html = data.candidates[0].content.parts[0].text.replace(/```html|```/g, '');
+                    localStorage.setItem('premiumDevotionalData', JSON.stringify({ date: today, html: html }));
+                    container.innerHTML = html;
+                }
             } catch (error) {
-                contentDiv.innerHTML = `<p>Não foi possível carregar o devocional. Verifique sua conexão.</p>`;
+                container.innerHTML = `<p>Não foi possível carregar a mensagem de hoje. Verifique sua conexão.</p>`;
             }
         }
 
-        // Inicia
-        generateDevotional();
+        loadDailyDevotional();
 
     </script>
 </body>
