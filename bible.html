@@ -97,7 +97,7 @@
             -webkit-backdrop-filter: blur(30px);
             border-bottom: 1px solid var(--glass-border);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease, gap 0.3s ease;
             z-index: 50;
         }
 
@@ -294,7 +294,7 @@
             color: var(--text-secondary);
             max-width: 900px;
             margin: 0 auto;
-            padding-bottom: 80px;
+            padding-bottom: 150px; 
         }
 
         /* EFEITOS DE SELEÇÃO E AUDIO NOS VERSÍCULOS */
@@ -306,7 +306,6 @@
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
             
-            /* Bloquear seleção de texto nativa para o Long Press funcionar perfeitamente */
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -412,10 +411,9 @@
         .mode-focus .btn-exit-focus { display: flex; opacity: 0.3; }
         .mode-focus .btn-exit-focus:hover { opacity: 1; background: var(--accent); color: var(--bg-color); border-color: var(--accent); }
 
-        /* Botão Flutuante de Cópia */
-        .floating-copy-btn {
+        /* Botões Flutuantes de Ação */
+        .floating-action-btn {
             position: fixed;
-            bottom: 30px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: rgba(20, 17, 19, 0.85);
@@ -437,18 +435,26 @@
             opacity: 0;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             pointer-events: none;
+            white-space: nowrap;
         }
 
-        .floating-copy-btn.show {
+        .floating-action-btn.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
             pointer-events: all;
         }
 
-        .floating-copy-btn:hover {
-            background: var(--accent);
-            color: var(--bg-color);
+        .copy-btn { bottom: 30px; }
+        .copy-btn:hover { background: var(--accent); color: var(--bg-color); }
+
+        .gemini-btn {
+            bottom: 85px; 
+            background: rgba(20, 17, 19, 0.95);
+            border-color: #A67CFF; 
+            color: #A67CFF;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(166, 124, 255, 0.25);
         }
+        .gemini-btn:hover { background: #A67CFF; color: #fff; }
 
         @keyframes fadeInText {
             from { opacity: 0; transform: translateY(10px); filter: blur(5px); }
@@ -465,7 +471,7 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- TEMA CLARO (SOFT BLUSH / NUDE) --- */
+        /* --- TEMA CLARO --- */
         body.theme-light {
             --bg-color: #FDFBFA;
             --glass-bg: rgba(255, 255, 255, 0.75);
@@ -493,21 +499,19 @@
         body.theme-light .verse-item.playing { background: linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0%, transparent 100%); border-left: 3px solid #121212; color: #121212; text-shadow: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
         body.theme-light .mode-focus #app-container { background: rgba(255, 255, 255, 0.5); }
         body.theme-light .focus-text { text-shadow: 0 10px 40px rgba(255,255,255,0.8); }
+        body.theme-light .gemini-btn { background: rgba(255,255,255, 0.95); }
 
         /* --- RESPONSIVIDADE EXTREMA (MOBILE-FIRST FEEL) --- */
         @media (max-width: 768px) {
-            header { padding: 15px 20px; gap: 12px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; }
+            header { padding: 15px 20px; gap: 12px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
             .header-row { flex-wrap: nowrap; margin-bottom: 5px; }
             
-            .brand-logo { font-size: 1.2rem; letter-spacing: 1px; }
+            .brand-logo { font-size: 1.2rem; letter-spacing: 1px; transition: all 0.3s ease; }
             .brand-logo i { font-size: 1.4rem; }
-            .btn span { display: none; } /* Esconde o texto, deixa só ícone */
+            .btn span { display: none; } 
             
             .controls-group { gap: 8px; }
-            .controls-group .btn {
-                width: 42px; height: 42px; padding: 0; 
-                border-radius: 12px; font-size: 1.2rem;
-            }
+            .controls-group .btn { width: 42px; height: 42px; padding: 0; border-radius: 12px; font-size: 1.2rem; }
             
             .nav-selectors { gap: 10px; width: 100%; }
             .nav-selectors select { padding: 12px 15px; font-size: 0.95rem; border-radius: 16px; }
@@ -518,17 +522,33 @@
             .settings-panel .controls-group { width: 100%; justify-content: space-between; }
             .settings-panel .controls-group .btn { width: 48%; border-radius: 12px; } 
             
-            /* Remove as setas no touch */
             .nav-side-btn { display: none !important; }
-
             .content-area { padding: 25px 5%; }
             .chapter-title { font-size: 1.8rem; margin-bottom: 30px; }
-            .verses-container { padding-bottom: 100px; } /* Espaço extra para scroll final */
+            .verses-container { padding-bottom: 150px; }
             .focus-text { font-size: calc(var(--focus-size) * 0.6); text-shadow: 0 5px 20px rgba(0,0,0,0.6); }
             .focus-reference { font-size: 1.2rem; }
             
             .btn-exit-focus { top: 15px; right: 15px; opacity: 0.6; padding: 10px 16px; border-radius: 12px; }
             .btn-exit-focus span { display: inline; font-size: 0.85rem;}
+
+            /* Estado Header Fechado no Scroll */
+            header.collapsed {
+                padding: 10px 20px;
+                border-radius: 0 0 16px 16px;
+                background: rgba(15, 12, 14, 0.85);
+                gap: 0;
+            }
+            body.theme-light header.collapsed { background: rgba(255, 255, 255, 0.9); }
+            
+            header.collapsed .controls-group,
+            header.collapsed .bottom-row,
+            header.collapsed .settings-panel {
+                display: none !important;
+            }
+            header.collapsed .brand-logo { font-size: 1rem; width: 100%; justify-content: center; }
+            header.collapsed .brand-logo i { font-size: 1.2rem; }
+            header.collapsed .collapsed-ref { display: inline-block !important; }
         }
     </style>
 </head>
@@ -542,8 +562,11 @@
         </button>
 
         <header id="main-header">
-            <div class="header-row">
-                <div class="brand-logo"><i class="ph-light ph-crown"></i> A Palavra</div>
+            <div class="header-row top-row">
+                <div class="brand-logo">
+                    <i class="ph-light ph-crown"></i> <span>A Palavra</span>
+                    <span id="collapsed-ref" class="collapsed-ref" style="display:none; font-size: 0.9rem; color: var(--text-secondary); margin-left: 8px; font-family: var(--body-font); font-weight: 400; text-transform: none; letter-spacing: normal;"></span>
+                </div>
         
                 <div class="controls-group">
                     <a href="menu.html" class="btn" title="Voltar ao Menu">
@@ -564,7 +587,7 @@
                 </div>
             </div>
 
-            <div class="header-row">
+            <div class="header-row bottom-row">
                 <div class="nav-selectors">
                     <select id="book-select"><option>Carregando...</option></select>
                     <select id="chapter-select"><option>-</option></select>
@@ -612,7 +635,12 @@
             <button class="nav-side-btn" id="next-btn"><i class="ph-light ph-caret-right"></i></button>
         </main>
         
-        <div id="floating-copy-btn" class="floating-copy-btn">
+        <!-- Botões de Ação para Texto Selecionado -->
+        <div id="floating-gemini-btn" class="floating-action-btn gemini-btn">
+            <i class="ph-light ph-sparkle"></i> <span>Pesquisar no Gemini</span>
+        </div>
+        
+        <div id="floating-copy-btn" class="floating-action-btn copy-btn">
             <i class="ph-light ph-copy"></i> <span id="copy-text-count">Copiar Versículo(s)</span>
         </div>
     </div>
@@ -851,7 +879,7 @@
                         onmouseleave="cancelPress()" 
                         ontouchstart="startPress(event, ${i})" 
                         ontouchend="cancelPress()" 
-                        ontouchmove="cancelPress()"
+                        ontouchcancel="cancelPress()"
                         oncontextmenu="event.preventDefault();"
                         onclick="handleVerseInteraction(event, ${i})">
                         <span class="verse-number">${i + 1}</span>${text}</p>`;
@@ -1050,31 +1078,61 @@
             disableFocusMode();
         });
 
-        // --- LÓGICA DE CÓPIA E SELEÇÃO MÚLTIPLA ---
+        // --- CONTROLE DE SCROLL DO HEADER (MOBILE) ---
+        let lastScrollTop = 0;
+        contentArea.addEventListener('scroll', () => {
+            if (window.innerWidth > 768) return; // Aplica apenas no celular
+            
+            let st = contentArea.scrollTop;
+            const header = document.getElementById('main-header');
+            const collapsedRef = document.getElementById('collapsed-ref');
+            
+            if(bibleData.length === 0) return;
+            
+            if (st > 80 && st > lastScrollTop) {
+                // Rolando para baixo
+                if (!header.classList.contains('collapsed')) {
+                    header.classList.add('collapsed');
+                    collapsedRef.textContent = `- ${bibleData[currentBookIndex].name} ${currentChapterIndex + 1}`;
+                }
+            } else if (st < lastScrollTop - 5 || st <= 80) {
+                // Rolando para cima (ou no topo)
+                header.classList.remove('collapsed');
+            }
+            lastScrollTop = st <= 0 ? 0 : st;
+        }, { passive: true });
+
+        // --- LÓGICA DE CÓPIA E SELEÇÃO MÚLTIPLA E GEMINI ---
         let isMultiSelectMode = false;
         let selectedVersesSet = new Set();
         let pressTimer;
+        let justLongPressed = false; // Trava para impedir duplo clique ao segurar
+        
         const copyBtn = document.getElementById('floating-copy-btn');
+        const geminiBtn = document.getElementById('floating-gemini-btn');
         const copyTextCount = document.getElementById('copy-text-count');
 
         function handleVerseInteraction(event, index) {
+            if (justLongPressed) {
+                justLongPressed = false;
+                return; // Ignora o clique fantasma logo após soltar o dedo
+            }
             if (isMultiSelectMode) {
                 toggleMultiSelection(index);
             } else {
-                toggleVerseSelection(index); // Mantém o comportamento original da Bíblia
+                toggleVerseSelection(index); 
             }
         }
 
         function startPress(e, index) {
             if (isMultiSelectMode) return;
             
-            // Inicia o timer para identificar um clique longo (500ms)
             pressTimer = window.setTimeout(() => {
                 isMultiSelectMode = true;
+                justLongPressed = true;
                 selectedVersesSet.clear();
                 toggleMultiSelection(index);
                 
-                // Haptic feedback se suportado no celular
                 if (navigator.vibrate) navigator.vibrate(50);
             }, 500); 
         }
@@ -1092,12 +1150,13 @@
                 selectedVersesSet.add(index);
                 verseEl.classList.add('multi-selected');
             }
-            updateCopyButton();
+            updateActionButtons();
         }
 
-        function updateCopyButton() {
+        function updateActionButtons() {
             if (selectedVersesSet.size > 0) {
                 copyBtn.classList.add('show');
+                geminiBtn.classList.add('show');
                 copyTextCount.innerText = `Copiar ${selectedVersesSet.size} Versículo(s)`;
             } else {
                 exitMultiSelectMode();
@@ -1108,18 +1167,16 @@
             isMultiSelectMode = false;
             selectedVersesSet.clear();
             copyBtn.classList.remove('show');
+            geminiBtn.classList.remove('show');
             document.querySelectorAll('.verse-item').forEach(el => el.classList.remove('multi-selected'));
         }
-
-        // Lógica de formatação e envio para a área de transferência
-        copyBtn.addEventListener('click', () => {
-            if (selectedVersesSet.size === 0) return;
-            
+        
+        // Função utilitária para gerar o texto formatado final (Ex: Mateus 20:10-24)
+        function getFormattedSelectedText() {
             const bookName = bibleData[currentBookIndex].name;
             const chapterNum = currentChapterIndex + 1;
             const versesArray = bibleData[currentBookIndex].chapters[currentChapterIndex];
             
-            // Ordena os versículos selecionados para que fiquem na ordem correta, independente de onde a pessoa clicou primeiro
             const sortedIndexes = Array.from(selectedVersesSet).sort((a, b) => a - b);
             
             let textToCopy = "";
@@ -1127,12 +1184,26 @@
             
             sortedIndexes.forEach(idx => {
                 textToCopy += `${versesArray[idx]} `;
-                verseReferences.push(idx + 1);
+                verseReferences.push(idx + 1); // Versículos começam em 1
             });
             
-            // Formata o texto final. Exemplo: "Deus amou o mundo..." Mateus 24:32
-            let refString = `${bookName} ${chapterNum}:${verseReferences.join(', ')}`;
-            let finalClipboardText = `"${textToCopy.trim()}" ${refString}`;
+            let refString = "";
+            if (verseReferences.length === 1) {
+                refString = `${bookName} ${chapterNum}:${verseReferences[0]}`;
+            } else {
+                let firstVerse = verseReferences[0];
+                let lastVerse = verseReferences[verseReferences.length - 1];
+                refString = `${bookName} ${chapterNum}:${firstVerse}-${lastVerse}`;
+            }
+            
+            return `"${textToCopy.trim()}" ${refString}`;
+        }
+
+        // Evento: Botão de Copiar Normal
+        copyBtn.addEventListener('click', () => {
+            if (selectedVersesSet.size === 0) return;
+            
+            const finalClipboardText = getFormattedSelectedText();
             
             navigator.clipboard.writeText(finalClipboardText).then(() => {
                 const originalText = copyBtn.innerHTML;
@@ -1148,11 +1219,29 @@
                 }, 1500);
             });
         });
+        
+        // Evento: Botão de Pesquisar no Gemini
+        geminiBtn.addEventListener('click', () => {
+            if (selectedVersesSet.size === 0) return;
+            
+            const finalClipboardText = getFormattedSelectedText();
+            
+            navigator.clipboard.writeText(finalClipboardText).then(() => {
+                const originalText = geminiBtn.innerHTML;
+                geminiBtn.innerHTML = '<i class="ph-light ph-check"></i> <span>Copiado! Cole no app...</span>';
+                
+                setTimeout(() => {
+                    geminiBtn.innerHTML = originalText;
+                    exitMultiSelectMode();
+                    window.open('https://gemini.google.com/', '_blank');
+                }, 1000);
+            });
+        });
 
         // Fechar a seleção se clicar em qualquer área vazia do aplicativo
         document.addEventListener('click', (e) => {
             if (isMultiSelectMode) {
-                if (!e.target.closest('.verse-item') && !e.target.closest('.floating-copy-btn')) {
+                if (!e.target.closest('.verse-item') && !e.target.closest('.floating-action-btn')) {
                     exitMultiSelectMode();
                 }
             }
