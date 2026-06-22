@@ -305,6 +305,12 @@
             border-left: 3px solid transparent;
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
+            
+            /* Bloquear seleção de texto nativa para o Long Press funcionar perfeitamente */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         
         .verse-item:hover { 
@@ -317,6 +323,15 @@
             border-left: 3px solid var(--accent);
             color: var(--text-primary);
             transform: scale(1.02) translateX(5px);
+        }
+        
+        /* Estilo para versículos selecionados no modo de cópia */
+        .verse-item.multi-selected {
+            background: linear-gradient(90deg, rgba(229, 178, 153, 0.2) 0%, transparent 100%);
+            border-left: 3px solid var(--accent);
+            color: var(--text-primary);
+            transform: scale(1.02) translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .verse-item.playing {
@@ -396,6 +411,44 @@
 
         .mode-focus .btn-exit-focus { display: flex; opacity: 0.3; }
         .mode-focus .btn-exit-focus:hover { opacity: 1; background: var(--accent); color: var(--bg-color); border-color: var(--accent); }
+
+        /* Botão Flutuante de Cópia */
+        .floating-copy-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(20, 17, 19, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-family: var(--body-font);
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px var(--accent-glow);
+            z-index: 1000;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        .floating-copy-btn.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .floating-copy-btn:hover {
+            background: var(--accent);
+            color: var(--bg-color);
+        }
 
         @keyframes fadeInText {
             from { opacity: 0; transform: translateY(10px); filter: blur(5px); }
@@ -558,6 +611,10 @@
 
             <button class="nav-side-btn" id="next-btn"><i class="ph-light ph-caret-right"></i></button>
         </main>
+        
+        <div id="floating-copy-btn" class="floating-copy-btn">
+            <i class="ph-light ph-copy"></i> <span id="copy-text-count">Copiar Versículo(s)</span>
+        </div>
     </div>
 
     <script>
@@ -788,7 +845,16 @@
                 let htmlStr = '';
                 versesArray.forEach((text, i) => {
                     const isSelected = (i === currentVerseIndex) ? 'selected' : '';
-                    htmlStr += `<p class="verse-item ${isSelected}" id="verse-${i}" onclick="toggleVerseSelection(${i})"><span class="verse-number">${i + 1}</span>${text}</p>`;
+                    htmlStr += `<p class="verse-item ${isSelected}" id="verse-${i}" 
+                        onmousedown="startPress(event, ${i})" 
+                        onmouseup="cancelPress()" 
+                        onmouseleave="cancelPress()" 
+                        ontouchstart="startPress(event, ${i})" 
+                        ontouchend="cancelPress()" 
+                        ontouchmove="cancelPress()"
+                        oncontextmenu="event.preventDefault();"
+                        onclick="handleVerseInteraction(event, ${i})">
+                        <span class="verse-number">${i + 1}</span>${text}</p>`;
                 });
                 versesList.innerHTML = htmlStr;
                 
@@ -982,6 +1048,114 @@
         exitFocusBtn.addEventListener('click', (e) => {
             e.stopPropagation(); 
             disableFocusMode();
+        });
+
+        // --- LÓGICA DE CÓPIA E SELEÇÃO MÚLTIPLA ---
+        let isMultiSelectMode = false;
+        let selectedVersesSet = new Set();
+        let pressTimer;
+        const copyBtn = document.getElementById('floating-copy-btn');
+        const copyTextCount = document.getElementById('copy-text-count');
+
+        function handleVerseInteraction(event, index) {
+            if (isMultiSelectMode) {
+                toggleMultiSelection(index);
+            } else {
+                toggleVerseSelection(index); // Mantém o comportamento original da Bíblia
+            }
+        }
+
+        function startPress(e, index) {
+            if (isMultiSelectMode) return;
+            
+            // Inicia o timer para identificar um clique longo (500ms)
+            pressTimer = window.setTimeout(() => {
+                isMultiSelectMode = true;
+                selectedVersesSet.clear();
+                toggleMultiSelection(index);
+                
+                // Haptic feedback se suportado no celular
+                if (navigator.vibrate) navigator.vibrate(50);
+            }, 500); 
+        }
+
+        function cancelPress() {
+            clearTimeout(pressTimer);
+        }
+
+        function toggleMultiSelection(index) {
+            const verseEl = document.getElementById(`verse-${index}`);
+            if (selectedVersesSet.has(index)) {
+                selectedVersesSet.delete(index);
+                verseEl.classList.remove('multi-selected');
+            } else {
+                selectedVersesSet.add(index);
+                verseEl.classList.add('multi-selected');
+            }
+            updateCopyButton();
+        }
+
+        function updateCopyButton() {
+            if (selectedVersesSet.size > 0) {
+                copyBtn.classList.add('show');
+                copyTextCount.innerText = `Copiar ${selectedVersesSet.size} Versículo(s)`;
+            } else {
+                exitMultiSelectMode();
+            }
+        }
+
+        function exitMultiSelectMode() {
+            isMultiSelectMode = false;
+            selectedVersesSet.clear();
+            copyBtn.classList.remove('show');
+            document.querySelectorAll('.verse-item').forEach(el => el.classList.remove('multi-selected'));
+        }
+
+        // Lógica de formatação e envio para a área de transferência
+        copyBtn.addEventListener('click', () => {
+            if (selectedVersesSet.size === 0) return;
+            
+            const bookName = bibleData[currentBookIndex].name;
+            const chapterNum = currentChapterIndex + 1;
+            const versesArray = bibleData[currentBookIndex].chapters[currentChapterIndex];
+            
+            // Ordena os versículos selecionados para que fiquem na ordem correta, independente de onde a pessoa clicou primeiro
+            const sortedIndexes = Array.from(selectedVersesSet).sort((a, b) => a - b);
+            
+            let textToCopy = "";
+            let verseReferences = [];
+            
+            sortedIndexes.forEach(idx => {
+                textToCopy += `${versesArray[idx]} `;
+                verseReferences.push(idx + 1);
+            });
+            
+            // Formata o texto final. Exemplo: "Deus amou o mundo..." Mateus 24:32
+            let refString = `${bookName} ${chapterNum}:${verseReferences.join(', ')}`;
+            let finalClipboardText = `"${textToCopy.trim()}" ${refString}`;
+            
+            navigator.clipboard.writeText(finalClipboardText).then(() => {
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="ph-light ph-check"></i> <span>Copiado!</span>';
+                copyBtn.style.background = 'var(--accent)';
+                copyBtn.style.color = 'var(--bg-color)';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = '';
+                    copyBtn.style.color = '';
+                    exitMultiSelectMode();
+                }, 1500);
+            });
+        });
+
+        // Fechar a seleção se clicar em qualquer área vazia do aplicativo
+        document.addEventListener('click', (e) => {
+            if (isMultiSelectMode) {
+                if (!e.target.closest('.verse-item') && !e.target.closest('.floating-copy-btn')) {
+                    exitMultiSelectMode();
+                }
+            }
         });
 
         // --- INICIALIZAÇÃO ---
